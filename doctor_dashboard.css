@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: #f3f6fb;
+    color: #111827;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 22px;
+    margin: 0;
+}
+
+.logout-btn {
+    background: #ef4444;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* ===== ACTIONS ===== */
+.actions {
+    display: flex;
+    gap: 20px;
+    padding: 30px 40px;
+}
+
+.action-card {
+    flex: 1;
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #111827;
+    font-size: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: 0.2s;
+}
+
+.action-card span {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.action-card:hover {
+    background: #2563eb;
+    color: white;
+}
+
+/* ===== APPOINTMENTS ===== */
+.appointments {
+    padding: 0 40px 40px;
+}
+
+.appointments h2 {
+    margin-bottom: 16px;
+}
+
+.appointment-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.appointment-card.scheduled {
+    border-left: 6px solid #22c55e;
+}
+
+.appointment-card.cancelled {
+    border-left: 6px solid #ef4444;
+    opacity: 0.6;
+}
+
+.status {
+    font-weight: bold;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+    padding: 20px;
+}

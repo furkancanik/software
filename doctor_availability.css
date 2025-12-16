@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f3f6fb;
+    color: #111827;
+}
+
+/* HEADER */
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.back-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* CONTENT */
+.container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.info {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+/* DAYS */
+.days {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+/* HOURS */
+.hours {
+    display: flex;
+    gap: 20px;
+}
+
+.hours label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+input[type="time"] {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+/* SAVE */
+.save-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background: #1d4ed8;
+}
+
+.msg {
+    margin-top: 14px;
+    font-weight: bold;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+    margin: 30px 0;
+}
