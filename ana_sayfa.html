@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Klinik Randevu Sistemi</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f4f7fb;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+      color: #1f2a37;
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap; /* 4 kutu için taşmayı engeller */
+      justify-content: center;
+    }
+
+    .role-box {
+      width: 220px;
+      height: 260px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #1f2a37;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .role-box:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .role-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Klinik Randevu Sistemi</h1>
+
+  <div class="container">
+    <a href="hasta_giris.html" class="role-box">
+      <div class="icon">👤</div>
+      <div class="role-title">Hasta Girişi</div>
+    </a>
+
+    <a href="doktor_giris.html" class="role-box">
+      <div class="icon">👨‍⚕️</div>
+      <div class="role-title">Doktor Girişi</div>
+    </a>
+
+    <a href="sekreter_giris.html" class="role-box">
+      <div class="icon">🧑‍💼</div>
+      <div class="role-title">Sekreter Girişi</div>
+    </a>
+
+    <a href="admin_giris.html" class="role-box">
+      <div class="icon">👑</div>
+      <div class="role-title">Admin Girişi</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    © 2025 Clinic Appointment Management System
+  </div>
+
+</body>
+</html>
