@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Girişi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="doktor.css"><!-- aynı stil olabilir -->
+</head>
+<body>
+
+<div class="page">
+  <div class="login-card">
+    <div class="icon">👑</div>
+    <h1>Admin Girişi</h1>
+    <p class="sub">Email ve şifrenizle giriş yapın.</p>
+
+    <div id="msg" class="msg"></div>
+
+    <form id="adminForm" class="form">
+      <label>Email</label>
+      <input id="email" type="email" placeholder="admin@clinic.com">
+
+      <label>Şifre</label>
+      <input id="password" type="password" placeholder="••••••••">
+
+      <button type="submit" class="btn">Giriş Yap</button>
+    </form>
+
+    <a class="back" href="ana_sayfa.html">← Ana Sayfaya Dön</a>
+  </div>
+
+  <footer class="footer">© 2025 Clinic Appointment Management System</footer>
+</div>
+
+<script>
+document.getElementById("adminForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const pass  = document.getElementById("password").value.trim();
+  const msg   = document.getElementById("msg");
+
+  msg.className = "msg";
+  msg.textContent = "";
+
+  if (!email || !pass) {
+    msg.classList.add("error");
+    msg.textContent = "Lütfen tüm alanları doldurun.";
+    return;
+  }
+
+  // DEMO ADMIN LOGIN
+  if (email === "admin@clinic.com" && pass === "admin") {
+    msg.classList.add("success");
+    msg.textContent = "Giriş başarılı.";
+    setTimeout(() => {
+      window.location.href = "admin.html";
+    }, 600);
+  } else {
+    msg.classList.add("error");
+    msg.textContent = "Email veya şifre hatalı.";
+  }
+});
+</script>
+
+</body>
+</html>

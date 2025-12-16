@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Klinik Randevu Sistemi | Doktor Girişi</title>
 
-  <!-- Ana sayfadaki genel stillerin varsa ekle (opsiyonel) -->
-  <!-- <link rel="stylesheet" href="ana_sayfa.css"> -->
-
   <link rel="stylesheet" href="doktor.css" />
 </head>
 <body>
@@ -18,16 +15,28 @@
       <h1>Doktor Girişi</h1>
       <p class="sub">Email/Username ve şifrenizle giriş yapın.</p>
 
-      <!-- Hata mesaj alanı (FR12 / NFR5) -->
+      <!-- Hata / Bilgi mesajları -->
       <div id="msg" class="msg" aria-live="polite"></div>
 
+      <!-- FORM -->
       <form id="loginForm" class="form">
         <label>Email / Username</label>
-        <input id="username" type="text" placeholder="ornek@mail.com" autocomplete="username" />
+        <input
+          id="username"
+          type="text"
+          placeholder="ornek@mail.com"
+          autocomplete="username"
+        />
 
         <label>Şifre</label>
-        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+        <input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
 
+        <!-- 🔴 EKSİK OLAN BUYDU -->
         <button type="submit" class="btn">Giriş Yap</button>
       </form>
 
@@ -38,8 +47,6 @@
   </div>
 
   <script>
-    // Basit front-end kontrol: boş alan + örnek giriş
-    // Backend bağlayınca burayı fetch/login ile değiştirirsin.
     const form = document.getElementById("loginForm");
     const msg  = document.getElementById("msg");
 
@@ -49,7 +56,7 @@
       const u = document.getElementById("username").value.trim();
       const p = document.getElementById("password").value.trim();
 
-      msg.className = "msg"; 
+      msg.className = "msg";
       msg.textContent = "";
 
       if (!u || !p) {
@@ -58,13 +65,14 @@
         return;
       }
 
-      // DEMO: örnek kullanıcı (istersen kaldır)
+      // DEMO LOGIN
       const demoUser = "doctor@clinic.com";
       const demoPass = "12345";
 
       if (u === demoUser && p === demoPass) {
         msg.classList.add("success");
-        msg.textContent = "Giriş başarılı. Yönlendiriliyorsunuz...";
+        msg.textContent = "Giriş başarılı.";
+
         setTimeout(() => {
           window.location.href = "doctor_dashboard.html";
         }, 600);
