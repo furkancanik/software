@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Randevu Al</title>
+    <link rel="stylesheet" href="randevu.css">
+
 
 <style>
 * {
@@ -201,10 +203,12 @@ button:hover {
     <button>Randevu Al</button>
   </form>
 
+
+
   <div class="back">
-    <a href="#">← Hasta Paneline Dön</a>
+    <a href="hasta_dashboard.html">← Hasta Paneline Dön</a>
   </div>
-</div>
+
 
 <script>
 const doctorsByDepartment = {
@@ -235,47 +239,54 @@ department.addEventListener("change", () => {
   }
 });
 </script>
- </div> <!-- box kapanışı -->
+ </div> 
+
+<div class="modal" id="successModal">
+  <div class="modal-content">
+    <h3>✅ Randevunuz Oluşturuldu</h3>
+
+    <p><strong>Alan:</strong> <span id="m-department"></span></p>
+    <p><strong>Doktor:</strong> <span id="m-doctor"></span></p>
+    <p><strong>Tarih:</strong> <span id="m-date"></span></p>
+    <p><strong>Saat:</strong> <span id="m-time"></span></p>
+
+    <button onclick="closeModal()">Tamam</button>
+  </div>
+</div>
 
 
 
 
-
-
-
-<!-- SUCCESS MODAL -->
 <script>
-const form = document.getElementById("appointmentForm");
-const modal = document.getElementById("successModal");
+document.getElementById("appointmentForm")
+  .addEventListener("submit", function(e) {
 
-form.addEventListener("submit", function(e) {
-  e.preventDefault();
+  e.preventDefault(); // ❗ sayfa yenilenmesin
 
-  const department =
-    document.getElementById("department").selectedOptions[0].text;
-  const doctor =
-    document.getElementById("doctor").value;
-  const date =
-    document.getElementById("date").value;
-  const time =
-    document.getElementById("time").value;
+  const departmentSelect = document.getElementById("department");
+  const department = departmentSelect.options[departmentSelect.selectedIndex].text;
+  const doctor = document.getElementById("doctor").value;
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
 
   if (!department || !doctor || !date || !time) {
-    alert("Lütfen tüm alanları doldurun.");
+    alert("Lütfen tüm alanları doldurunuz.");
     return;
   }
 
-  document.getElementById("m-department").textContent = department;
-  document.getElementById("m-doctor").textContent = doctor;
-  document.getElementById("m-date").textContent = date;
-  document.getElementById("m-time").textContent = time;
+  // 👉 Modal içini doldur
+  document.getElementById("m-department").innerText = department;
+  document.getElementById("m-doctor").innerText = doctor;
+  document.getElementById("m-date").innerText = date;
+  document.getElementById("m-time").innerText = time;
 
-  modal.style.display = "flex";
+  // 👉 Modal aç
+  document.getElementById("successModal").style.display = "flex";
 });
-
+  
 function closeModal() {
-  modal.style.display = "none";
-  window.location.href = "hasta_dashboard.html";
+  document.getElementById("successModal").style.display = "none";
+  window.location.href = "hasta_dashboard.html"; 
 }
 </script>
 

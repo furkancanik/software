@@ -161,46 +161,20 @@ button:hover {
 
 
 
-
-
-.modal-overlay {
+.modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  display: none;
+  display: none;              /* 🔴 BAŞLANGIÇTA GİZLİ */
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
-.modal-box {
+.modal-content {
   background: white;
-  width: 380px;
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  border-radius: 16px;
   text-align: center;
-}
-
-.modal-header .check {
-  font-size: 32px;
-  color: #22c55e;
-}
-
-.modal-content p {
-  margin: 10px 0;
-  font-size: 15px;
-}
-
-.modal-btn {
-  margin-top: 20px;
-  width: 100%;
-  height: 44px;
-  border: none;
-  border-radius: 14px;
-  background: #6366f1;
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
+  width: 320px;
 }
