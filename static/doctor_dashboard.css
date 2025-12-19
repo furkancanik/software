@@ -11,7 +11,7 @@ body {
 
 /* ===== HEADER ===== */
 .header {
-    background: #111827;
+    background: none;
     color: white;
     padding: 18px 40px;
     display: flex;

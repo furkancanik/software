@@ -72,6 +72,9 @@ Uygulamayı uvicorn ile ayağa kaldırın:
 uvicorn main:app --reload
 ```
 
+Durdurmak için 
+`ctrl + C`
+
 ### 6. Erişim
 Tarayıcınızdan şu adrese giderek uygulamayı kullanmaya başlayabilirsiniz:
 - **Uygulama:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
