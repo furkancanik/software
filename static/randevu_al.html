@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Randevu Al</title>
+  <link rel="stylesheet" href="randevu.css">
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Randevu Al</h2>
+
+    <form>
+
+      <!-- ALAN / BÖLÜM -->
+      <label>Alan / Bölüm</label>
+      <div class="input-icon department-icon">
+        <select id="department" required>
+          <option value="">Alan seçiniz</option>
+          <option value="Cardiology">Kardiyoloji</option>
+          <option value="Dahiliye">Dahiliye</option>
+          <option value="Orthopedics">Ortopedi</option>
+          <option value="Göz">Göz Hastalıkları</option>
+          <option value="Neurology">Nöroloji</option>
+          <option value="Dermatology">Cildiye</option>
+          <option value="Pediatrics">Çocuk Hastalıkları</option>
+        </select>
+      </div>
+
+      <!-- DOKTOR -->
+      <label>Doktor</label>
+      <div class="input-icon select-icon">
+        <select id="doctor" required disabled>
+          <option value="">Önce alan seçiniz</option>
+        </select>
+      </div>
+
+      <!-- TARİH -->
+      <label>Tarih</label>
+      <div class="input-icon date-icon">
+        <input type="date" id="date" required>
+      </div>
+
+      <!-- SAAT -->
+      <label>Saat</label>
+      <div class="input-icon time-icon">
+        <select id="time" required>
+          <option value="">Saat seçiniz</option>
+          <option value="09:00">09:00</option>
+          <option value="09:30">09:30</option>
+          <option value="10:00">10:00</option>
+          <option value="10:30">10:30</option>
+          <option value="11:00">11:00</option>
+          <option value="11:30">11:30</option>
+          <option value="12:00">12:00</option>
+          <option value="13:00">13:00</option>
+          <option value="13:30">13:30</option>
+          <option value="14:00">14:00</option>
+        </select>
+      </div>
+
+
+
+      <button type="submit">Randevu Al</button>
+    </form>
+
+    <div class="back">
+      <a href="hasta_dashboard.html">← Hasta Paneline Dön</a>
+    </div>
+  </div>
+
+  <script>
+    // Kullanıcı giriş yapmış mı kontrol et
+    const userInfo = JSON.parse(localStorage.getItem('user_info'));
+    if (!userInfo) {
+      window.location.href = '/static/login.html';
+    }
+
+    const departmentSelect = document.getElementById("department");
+    const doctorSelect = document.getElementById("doctor");
+    const dateInput = document.getElementById("date");
+    const timeSelect = document.getElementById("time");
+    const form = document.querySelector('form');
+
+    // Form submit olayını yakala
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      try {
+        const response = await fetch('/appointments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            patient_id: userInfo.user_id, // Hasta kendi kendine alıyor varsayıyoruz
+            doctor_id: parseInt(doctorSelect.value),
+            slot_id: parseInt(timeSelect.value), // slot_id seçilen value olacak
+            appointment_date: dateInput.value,
+            user_id: userInfo.user_id
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert('Randevu başarıyla oluşturuldu!');
+          window.location.href = '/static/hasta_dashboard.html';
+        } else {
+          alert(result.detail || 'Randevu oluşturulurken hata oluştu.');
+        }
+      } catch (err) {
+        alert('Bağlantı hatası: ' + err.message);
+      }
+    });
+
+    let allDoctors = [];
+
+    // 1. Doktorları sunucudan çek
+    async function fetchDoctors() {
+      try {
+        const res = await fetch('/doctors');
+        allDoctors = await res.json();
+      } catch (err) {
+        console.error("Doktorlar çekilemedi", err);
+      }
+    }
+
+    fetchDoctors();
+
+    // 2. Bölüm seçilince doktorları filtrele
+    departmentSelect.addEventListener("change", function () {
+      const selectedDept = this.value; // örn: "kardiyoloji"
+      doctorSelect.innerHTML = "<option value=''>Doktor seçiniz</option>";
+
+      if (!selectedDept) {
+        doctorSelect.disabled = true;
+        return;
+      }
+
+      doctorSelect.disabled = false;
+
+      // Uzmanlık alanı eşleştirmesi yapmamız gerekebilir veya 
+      // backend'den gelen "expertise" alanı ile value'nun uyuşmasını bekleriz
+      // Veritabanındaki uzmanlık adları Türkçe ve büyük/küçük harf duyarlı olabilir.
+      // Eşleşme mantığı basitçe "içerir" şeklinde yapalım:
+
+      const filtered = allDoctors.filter(d =>
+        d.expertise.toLowerCase().includes(selectedDept.toLowerCase())
+      );
+
+      filtered.forEach(d => {
+        const opt = document.createElement("option");
+        opt.textContent = `${d.first_name} ${d.last_name}`;
+        opt.value = d.doctor_id;
+        doctorSelect.appendChild(opt);
+      });
+    });
+
+    // 3. Tarih veya Doktor değişince saatleri (slotları) çek
+    async function loadSlots() {
+      const docId = doctorSelect.value;
+      const dateVal = dateInput.value;
+
+      if (!docId || !dateVal) return;
+
+      timeSelect.innerHTML = "<option value=''>Yükleniyor...</option>";
+      timeSelect.disabled = true;
+
+      try {
+        const res = await fetch(`/available-slots/?doctor_id=${docId}&date=${dateVal}`);
+        const slots = await res.json();
+
+        timeSelect.innerHTML = "<option value=''>Saat seçiniz</option>";
+
+        if (slots.length === 0) {
+          const opt = document.createElement("option");
+          opt.textContent = "Boş saat yok";
+          timeSelect.appendChild(opt);
+        } else {
+          slots.forEach(s => {
+            const opt = document.createElement("option");
+            // Kullanıcıya saati göster, arkada slot_id gönder
+            opt.textContent = `${s.start_time} - ${s.end_time}`;
+            opt.value = s.slot_id;
+            timeSelect.appendChild(opt);
+          });
+          timeSelect.disabled = false;
+        }
+      } catch (error) {
+        console.error(error);
+        timeSelect.innerHTML = "<option value=''>Hata oluştu</option>";
+      }
+    }
+
+    doctorSelect.addEventListener('change', loadSlots);
+    dateInput.addEventListener('change', loadSlots);
+
+  </script>
+
+</body>
+
+</html>

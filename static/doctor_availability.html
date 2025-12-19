@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Availability Settings | Clinic Appointment System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="doctor_availability.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Availability Settings</h1>
+        <a href="/static/doctor_dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <section class="container">
+        <p class="info">
+            Please select your working days and hours.
+        </p>
+
+        <!-- DAYS -->
+        <div class="card">
+            <h2>Working Days</h2>
+            <div class="days">
+                <label><input type="checkbox"> Monday</label>
+                <label><input type="checkbox"> Tuesday</label>
+                <label><input type="checkbox"> Wednesday</label>
+                <label><input type="checkbox"> Thursday</label>
+                <label><input type="checkbox"> Friday</label>
+            </div>
+        </div>
+
+        <!-- HOURS -->
+        <div class="card">
+            <h2>Working Hours</h2>
+            <div class="hours">
+                <div>
+                    <label>Start Time</label>
+                    <input type="time">
+                </div>
+                <div>
+                    <label>End Time</label>
+                    <input type="time">
+                </div>
+            </div>
+        </div>
+
+        <!-- SAVE -->
+        <button class="save-btn" onclick="saveAvailability()">
+            Save Availability
+        </button>
+
+        <p id="msg" class="msg"></p>
+    </section>
+
+    <footer class="footer">
+        © 2025 Clinic Appointment Management System
+    </footer>
+
+    <script>
+        function saveAvailability() {
+            const msg = document.getElementById("msg");
+            msg.style.color = "#16a34a";
+            msg.textContent = "Availability settings saved successfully.";
+        }
+    </script>
+
+</body>
+
+</html>

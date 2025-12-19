@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8">
   <title>Giriş Yap</title>
@@ -19,7 +20,7 @@
       background: #fff;
       padding: 40px;
       border-radius: 18px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
@@ -111,24 +112,64 @@
   <div class="login-box">
     <h2>Hasta Girişi</h2>
 
-    <form action="hasta_dashboard.html">
+    <form id="loginForm">
 
       <label>Email</label>
-      <input type="email" name="email" required>
+      <input type="email" name="email" id="email" required>
 
       <label>Şifre</label>
-      <input type="password" name="password" required>
+      <input type="password" name="password" id="password" required>
 
       <button type="submit">Giriş Yap</button>
 
       <!-- Backend hata dönerse gösterilir -->
-      <!-- <div class="error">Hatalı email veya şifre</div> -->
+      <div id="error" class="error"></div>
     </form>
 
     <div class="footer-text">
-      Hesabın yok mu? <a href="register.html">Kayıt Ol</a>
+      Hesabın yok mu? <a href="/static/register.html">Kayıt Ol</a>
     </div>
   </div>
 
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error');
+
+      errorDiv.textContent = '';
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Giriş başarılı, bilgileri kaydet
+          localStorage.setItem('user_info', JSON.stringify(data));
+
+          // Yönlendir
+          window.location.href = '/static/hasta_dashboard.html';
+        } else {
+          errorDiv.textContent = data.detail || 'Giriş yapılamadı.';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Bir hata oluştu: ' + error.message;
+      }
+    });
+  </script>
+
 </body>
+
 </html>

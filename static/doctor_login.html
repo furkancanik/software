@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +8,7 @@
 
   <link rel="stylesheet" href="doktor.css" />
 </head>
+
 <body>
 
   <div class="page">
@@ -21,26 +23,16 @@
       <!-- FORM -->
       <form id="loginForm" class="form">
         <label>Email / Username</label>
-        <input
-          id="username"
-          type="text"
-          placeholder="ornek@mail.com"
-          autocomplete="username"
-        />
+        <input id="username" type="text" placeholder="ornek@mail.com" autocomplete="username" />
 
         <label>Şifre</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          autocomplete="current-password"
-        />
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
 
         <!-- 🔴 EKSİK OLAN BUYDU -->
         <button type="submit" class="btn">Giriş Yap</button>
       </form>
 
-      <a class="back" href="ana_sayfa.html">← Role Selection’a Dön</a>
+      <a class="back" href="/static/ana_sayfa.html">← Role Selection’a Dön</a>
     </div>
 
     <footer class="footer">© 2025 Clinic Appointment Management System</footer>
@@ -48,9 +40,9 @@
 
   <script>
     const form = document.getElementById("loginForm");
-    const msg  = document.getElementById("msg");
+    const msg = document.getElementById("msg");
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const u = document.getElementById("username").value.trim();
@@ -65,23 +57,34 @@
         return;
       }
 
-      // DEMO LOGIN
-      const demoUser = "doctor@clinic.com";
-      const demoPass = "12345";
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: u, password: p })
+        });
 
-      if (u === demoUser && p === demoPass) {
-        msg.classList.add("success");
-        msg.textContent = "Giriş başarılı.";
+        const data = await response.json();
 
-        setTimeout(() => {
-          window.location.href = "doctor_dashboard.html";
-        }, 600);
-      } else {
+        if (response.ok) {
+          localStorage.setItem('user_info', JSON.stringify(data));
+
+          msg.classList.add("success");
+          msg.textContent = "Giriş başarılı.";
+          setTimeout(() => {
+            window.location.href = "/static/doctor_dashboard.html";
+          }, 600);
+        } else {
+          msg.classList.add("error");
+          msg.textContent = data.detail || "Giriş başarısız.";
+        }
+      } catch (err) {
         msg.classList.add("error");
-        msg.textContent = "Kullanıcı adı veya şifre hatalı.";
+        msg.textContent = "Bağlantı hatası: " + err.message;
       }
     });
   </script>
 
 </body>
+
 </html>
