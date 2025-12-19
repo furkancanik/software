@@ -41,20 +41,34 @@
   </footer>
 
   <script>
-    document.getElementById("secretaryLoginForm").addEventListener("submit", function (e) {
+    document.getElementById("secretaryLoginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      // DEMO SEKRETER
-      const demoEmail = "sekreter@clinic.com";
-      const demoPassword = "123456";
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
 
-      if (email === demoEmail && password === demoPassword) {
-        window.location.href = "sekreter_dashboard.html";
-      } else {
-        alert("Email veya şifre hatalı!");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.role_name === 'secretary' || data.role_name === 'admin') {
+            localStorage.setItem('userInfo', JSON.stringify(data));
+            window.location.href = 'sekreter_dashboard.html';
+          } else {
+            alert('Bu alana sadece sekreterler giriş yapabilir.');
+          }
+        } else {
+          const result = await response.json();
+          alert(result.detail || "Giriş başarısız!");
+        }
+      } catch (error) {
+        console.error("Login Error:", error);
+        alert("Bağlantı hatası oluştu.");
       }
     });
   </script>

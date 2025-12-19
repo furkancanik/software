@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <title>Sekreter - Hasta Kaydı</title>
   <link rel="stylesheet" href="sekreter_hasta_kayit.css">
 </head>
+
 <body>
 
   <div class="box">
@@ -25,7 +27,7 @@
       <label>Telefon</label>
       <input type="tel" required placeholder="05xx xxx xx xx">
 
-      
+
       <button type="submit">Hasta Kaydet</button>
     </form>
 
@@ -44,20 +46,58 @@
     </div>
   </div>
 
-<script>
-  const form = document.getElementById("patientForm");
-  const modal = document.getElementById("successModal");
+  <script>
+    // Auth Check
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (!userInfo || (userInfo.role_name !== 'secretary' && userInfo.role_name !== 'admin')) {
+      window.location.href = 'sekreter.html';
+    }
 
-  form.addEventListener("submit", function(e){
-    e.preventDefault(); // backend yok → sayfa yenilenmesin
-    modal.style.display = "flex";
-    form.reset();
-  });
+    const form = document.getElementById("patientForm");
+    const modal = document.getElementById("successModal");
 
-  function closeModal(){
-    modal.style.display = "none";
-  }
-</script>
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const inputs = form.querySelectorAll('input');
+      const first_name = inputs[0].value.trim();
+      const last_name = inputs[1].value.trim();
+      const email = inputs[2].value.trim();
+      const phone = inputs[3].value.trim();
+
+      // Varsayılan şifre
+      const password = "123";
+
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            password,
+            first_name,
+            last_name,
+            phone
+          })
+        });
+
+        if (response.ok) {
+          modal.style.display = "flex";
+          form.reset();
+        } else {
+          const err = await response.json();
+          alert("Kayıt başarısız: " + (err.detail || "Hata oluştu"));
+        }
+      } catch (error) {
+        alert("Bağlantı hatası: " + error);
+      }
+    });
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
+  </script>
 
 </body>
+
 </html>

@@ -1,12 +1,14 @@
 <!-- sekreter_dashboard.html -->
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sekreter Paneli</title>
   <link rel="stylesheet" href="sekreter_dashboard.css">
 </head>
+
 <body>
 
   <div class="dashboard">
@@ -43,8 +45,7 @@
     </div>
 
     <div class="actions">
-      <a class="logout" href="ana_sayfa.html">🚪 Çıkış Yap</a>
-      <a class="back" href="ana_sayfa.html">← Ana Sayfaya Dön</a>
+      <a class="logout" href="#" onclick="logout(); return false;">🚪 Çıkış Yap</a>
     </div>
   </div>
 
@@ -52,5 +53,19 @@
     © 2025 Clinic Appointment Management System
   </footer>
 
+  <script>
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+
+    if (!userInfo || (userInfo.role_name !== 'secretary' && userInfo.role_name !== 'admin')) {
+      window.location.href = 'sekreter.html';
+    }
+
+    function logout() {
+      localStorage.removeItem('userInfo');
+      window.location.href = '/';
+    }
+  </script>
+
 </body>
+
 </html>

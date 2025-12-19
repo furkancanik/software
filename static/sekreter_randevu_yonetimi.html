@@ -1,113 +1,104 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8">
   <title>Sekreter - Randevu Yönetimi</title>
   <link rel="stylesheet" href="sekreter_randevu_yonetimi.css">
 </head>
+
 <body>
 
-<div class="box">
-  <h2>Randevu Yönetimi</h2>
-  <p class="subtitle">Randevuları görüntüleyin ve yönetin</p>
-  <button class="new-appointment-btn">
-    ➕ Yeni Randevu Oluştur
-  </button>
+  <div class="box">
+    <h2>Randevu Yönetimi</h2>
+    <p class="subtitle">Randevuları görüntüleyin ve yönetin</p>
+    <button class="new-appointment-btn">
+      ➕ Yeni Randevu Oluştur
+    </button>
 
 
 
-<div class="modal" id="appointmentModal">
-  <div class="modal-content">
+    <div class="modal" id="appointmentModal">
+      <div class="modal-content">
 
-    <h3>Yeni Randevu Oluştur</h3>
+        <h3>Yeni Randevu Oluştur</h3>
 
-    <label>Hasta</label>
-    <select id="patient">
-      <option value="">Hasta seçiniz</option>
-      <option>Hümeyra Koçtemiz</option>
-      <option>Ayşe Demir</option>
-      <option>Mehmet Yılmaz</option>
-    </select>
+        <label>Hasta</label>
+        <select id="patient">
+          <option value="">Hasta seçiniz</option>
+        </select>
 
-    <!-- ALAN / BÖLÜM -->
-<label>Alan</label>
-<div class="field">
-  <select id="department">
-    <option value="">Alan seçiniz</option>
-    <option value="kardiyoloji">Kardiyoloji</option>
-    <option value="dahiliye">Dahiliye</option>
-    <option value="ortopedi">Ortopedi</option>
-    <option value="goz">Göz Hastalıkları</option>
-    <option value="noroloji">Nöroloji</option>
-    <option value="cildiye">Cildiye</option>
-    <option value="kulak">Kulak Burun Boğaz</option>
-    <option value="psikiyatri">Psikiyatri</option>
-  </select>
-</div>
+        <!-- ALAN / BÖLÜM -->
+        <label>Alan</label>
+        <div class="field">
+          <select id="department">
+            <option value="">Alan seçiniz</option>
+            <option value="kardiyoloji">Kardiyoloji</option>
+            <option value="dahiliye">Dahiliye</option>
+            <option value="ortopedi">Ortopedi</option>
+            <option value="goz">Göz Hastalıkları</option>
+            <option value="noroloji">Nöroloji</option>
+            <option value="cildiye">Cildiye</option>
+            <option value="kulak">Kulak Burun Boğaz</option>
+            <option value="psikiyatri">Psikiyatri</option>
+          </select>
+        </div>
 
-<!-- DOKTOR -->
-<label>Doktor</label>
-<div class="field">
-  <span class="icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#6366f1" stroke-width="2">
-      <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5z"/>
-      <path d="M2 22v-3c0-3.3 6.7-5 10-5s10 1.7 10 5v3"/>
-    </svg>
-  </span>
+        <!-- DOKTOR -->
+        <label>Doktor</label>
+        <div class="field">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+              <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5z" />
+              <path d="M2 22v-3c0-3.3 6.7-5 10-5s10 1.7 10 5v3" />
+            </svg>
+          </span>
 
-  <select id="doctor" disabled>
-    <option>Önce alan seçiniz</option>
-  </select>
-</div>
+          <select id="doctor" disabled>
+            <option>Önce alan seçiniz</option>
+          </select>
+        </div>
 
-<!-- TARİH -->
-<label>Tarih</label>
-<div class="field">
-  <span class="icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#6366f1" stroke-width="2">
-      <path d="M11 14h1v4"/>
-      <path d="M16 2v4"/>
-      <path d="M3 10h18"/>
-      <path d="M8 2v4"/>
-      <rect x="3" y="4" width="18" height="18" rx="2"/>
-    </svg>
-  </span>
+        <!-- TARİH -->
+        <label>Tarih</label>
+        <div class="field">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+              <path d="M11 14h1v4" />
+              <path d="M16 2v4" />
+              <path d="M3 10h18" />
+              <path d="M8 2v4" />
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+            </svg>
+          </span>
 
-  <input type="date" id="date" required>
-</div>
+          <input type="date" id="date" required>
+        </div>
 
-<!-- SAAT -->
-<label>Saat</label>
-<div class="field">
-  <span class="icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="#6366f1" stroke-width="2">
-      <path d="M12 6v6l4 2"/>
-      <circle cx="12" cy="12" r="10"/>
-    </svg>
-  </span>
+        <!-- SAAT -->
+        <label>Saat</label>
+        <div class="field">
+          <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+              <path d="M12 6v6l4 2" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+          </span>
 
-  <select id="time" required>
-    <option value="">Saat seçiniz</option>
-    <option>09:00</option>
-    <option>09:30</option>
-    <option>10:00</option>
-    <option>10:30</option>
-    <option>11:00</option>
-    <option>11:30</option>
-  </select>
-</div>
+          <select id="time" required>
+            <option value="">Saat seçiniz</option>
+          </select>
+        </div>
 
 
-    <div class="modal-actions">
-      <button class="cancel" onclick="closeModal()">İptal</button>
-      <button class="save" onclick="saveAppointment()">Kaydet</button>
+        <div class="modal-actions">
+          <button class="cancel" onclick="closeModal()">İptal</button>
+          <button class="save" onclick="saveAppointment()">Kaydet</button>
+        </div>
+
+      </div>
     </div>
 
-  </div>
-</div>
 
 
 
@@ -132,137 +123,254 @@
 
 
 
-
-  <!-- RANDEVU KARTI -->
-  <div class="appointment-card">
-    <div class="info">
-      <p><strong>Hasta:</strong> Hümeyra Koçtemiz</p>
-      <p><strong>Bölüm:</strong> Kardiyoloji</p>
-      <p><strong>Doktor:</strong> Dr. Ahmet Yılmaz</p>
-      <p><strong>Tarih:</strong> 20.05.2025</p>
-      <p><strong>Saat:</strong> 10:30</p>
-      <p class="status pending">Durum: Beklemede</p>
-    </div>
-
-    <div class="actions">
-      <button class="approve">Onayla</button>
-      <button class="cancel">İptal Et</button>
+    <div class="back">
+      <a href="sekreter_dashboard.html">← Sekreter Paneline Dön</a>
     </div>
   </div>
 
-  <!-- RANDEVU KARTI -->
-  <div class="appointment-card">
-    <div class="info">
-      <p><strong>Hasta:</strong> Ayşe Demir</p>
-      <p><strong>Bölüm:</strong> Dahiliye</p>
-      <p><strong>Doktor:</strong> Dr. Selin Acar</p>
-      <p><strong>Tarih:</strong> 22.05.2025</p>
-      <p><strong>Saat:</strong> 14:00</p>
-      <p class="status approved">Durum: Onaylandı</p>
-    </div>
+  <script>
+    // 1. AUTH CHECK
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    if (!userInfo || (userInfo.role_name !== 'secretary' && userInfo.role_name !== 'admin')) {
+      window.location.href = 'sekreter.html';
+    }
 
-    <div class="actions">
-      <button class="cancel">İptal Et</button>
-    </div>
-  </div>
+    // 2. DOM ELEMENTS
+    const modal = document.getElementById("appointmentModal");
+    const container = document.querySelector('.box'); // Randevu listesi container'ı
 
-  <div class="back">
-    <a href="sekreter_dashboard.html">← Sekreter Paneline Dön</a>
-  </div>
-</div>
+    // Modal Inputs
+    const patientSelect = document.getElementById("patient");
+    const departmentSelect = document.getElementById("department");
+    const doctorSelect = document.getElementById("doctor");
+    const dateInput = document.getElementById("date");
+    const timeSelect = document.getElementById("time");
 
+    let allDoctors = [];
+    let allPatients = [];
 
+    // 3. INIT
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Eski statik kartları temizle (eğer varsa)
+      document.querySelectorAll('.appointment-card').forEach(e => e.remove());
 
-<script>
-  
-  document.querySelectorAll(".approve").forEach(btn => {
-    btn.addEventListener("click", function () {
-      const card = this.closest(".appointment-card");
-      card.querySelector(".status").textContent = "Durum: Onaylandı";
-      card.querySelector(".status").className = "status approved";
-      openModal("✅ Randevu Onaylandı", "Randevu başarıyla onaylandı.");
-      this.remove();
+      await loadAppointments();
+      await loadPatients();
+      await loadDoctorsData();
     });
-  });
 
-  document.querySelectorAll(".cancel").forEach(btn => {
-    btn.addEventListener("click", function () {
-      const card = this.closest(".appointment-card");
-      card.querySelector(".status").textContent = "Durum: İptal Edildi";
-      card.querySelector(".status").className = "status canceled";
-      openModal("❌ Randevu İptal Edildi", "Randevu iptal edildi.");
-      card.querySelector(".actions").remove();
+    // 4. LOAD & RENDER APPOINTMENTS
+    async function loadAppointments() {
+      try {
+        const res = await fetch('/all-appointments');
+        const appointments = await res.json();
+
+        // Mevcut kartları temizle (yenileme durumunda)
+        container.querySelectorAll('.appointment-card').forEach(e => e.remove());
+
+        // Back link'ten önce ekleyelim
+        const backLink = document.querySelector('.back');
+
+        appointments.forEach(appt => {
+          const card = document.createElement('div');
+          card.className = 'appointment-card';
+
+          let statusClass = 'pending';
+          let statusText = 'Beklemede';
+
+          if (appt.status === 'scheduled') { statusClass = 'approved'; statusText = 'Onaylandı'; }
+          else if (appt.status === 'cancelled') { statusClass = 'canceled'; statusText = 'İptal Edildi'; }
+          else if (appt.status === 'completed') { statusClass = 'approved'; statusText = 'Tamamlandı'; }
+
+          card.innerHTML = `
+                    <div class="info">
+                        <p><strong>Hasta:</strong> ${appt.patient_name}</p>
+                        <p><strong>Bölüm:</strong> ${appt.expertise}</p>
+                        <p><strong>Doktor:</strong> ${appt.doctor_name}</p>
+                        <p><strong>Tarih:</strong> ${new Date(appt.appointment_date).toLocaleDateString('tr-TR')}</p>
+                        <p><strong>Saat:</strong> ${appt.start_time.substring(0, 5)}</p>
+                        <p class="status ${statusClass}">Durum: ${statusText}</p>
+                    </div>
+                `;
+
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'actions';
+
+          if (appt.status === 'scheduled') {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'cancel';
+            cancelBtn.textContent = 'İptal Et';
+            cancelBtn.onclick = () => cancelAppt(appt.appointment_id);
+            actionsDiv.appendChild(cancelBtn);
+          } else if (appt.status === 'cancelled') {
+            // İptal edilmişse buton gösterme
+          }
+
+          card.appendChild(actionsDiv);
+
+          // Back link'ten önce ekle
+          container.insertBefore(card, backLink);
+        });
+
+      } catch (err) {
+        console.error("Randevular yüklenemedi:", err);
+      }
+    }
+
+    // 5. LOAD PATIENTS
+    async function loadPatients() {
+      try {
+        const res = await fetch('/users');
+        const users = await res.json();
+        allPatients = users.filter(u => u.role === 'patient');
+
+        patientSelect.innerHTML = '<option value="">Hasta seçiniz</option>';
+        allPatients.forEach(p => {
+          const opt = document.createElement('option');
+          // Value olarak patient_id veriyoruz
+          opt.value = p.patient_id;
+          opt.textContent = `${p.name} (${p.email})`;
+          patientSelect.appendChild(opt);
+        });
+      } catch (err) { console.error(err); }
+    }
+
+    // 6. LOAD DOCTORS
+    async function loadDoctorsData() {
+      try {
+        const res = await fetch('/doctors');
+        allDoctors = await res.json();
+      } catch (err) { console.error(err); }
+    }
+
+    // 7. EVENTS
+
+    // Bölüm değişince doktorları filtrele
+    departmentSelect.addEventListener('change', function () {
+      const dept = this.value; // value'lar küçük harf "kardiyoloji"
+      doctorSelect.innerHTML = '<option value="">Doktor seçiniz</option>';
+      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>'; // Temizle
+      doctorSelect.disabled = true;
+
+      if (!dept) return;
+
+      const filtered = allDoctors.filter(d => d.expertise.toLowerCase() === dept.toLowerCase());
+
+      if (filtered.length > 0) {
+        doctorSelect.disabled = false;
+        filtered.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.doctor_id;
+          opt.textContent = `${d.first_name} ${d.last_name}`;
+          doctorSelect.appendChild(opt);
+        });
+      } else {
+        const opt = document.createElement('option');
+        opt.textContent = "Bu bölümde doktor bulunamadı";
+        doctorSelect.appendChild(opt);
+      }
     });
-  });
-</script>
 
+    // Tarih veya Doktor değişince saatleri çek
+    async function updateSlots() {
+      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+      const doctorId = doctorSelect.value;
+      const dateVal = dateInput.value;
 
+      if (!doctorId || !dateVal) return;
 
+      try {
+        const res = await fetch(`/available-slots/?doctor_id=${doctorId}&date=${dateVal}`);
+        const slots = await res.json();
 
+        if (slots.length === 0) {
+          const opt = document.createElement('option');
+          opt.textContent = "Uygun saat yok";
+          timeSelect.appendChild(opt);
+          return;
+        }
 
+        slots.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.slot_id;
+          opt.textContent = `${s.start_time.substring(0, 5)} - ${s.end_time.substring(0, 5)}`;
+          timeSelect.appendChild(opt);
+        });
+      } catch (err) { console.error(err); }
+    }
 
+    doctorSelect.addEventListener('change', updateSlots);
+    dateInput.addEventListener('change', updateSlots);
 
-
-
-
-
-
-
-
-
-
-
-<script>
-/* MODAL AÇ / KAPAT */
-const modal = document.getElementById("appointmentModal");
-const openBtn = document.querySelector(".new-appointment-btn");
-
-openBtn.addEventListener("click", () => {
-  modal.style.display = "flex";
-});
-
-function closeModal() {
-  modal.style.display = "none";
-}
-
-/* ALAN → DOKTOR */
-const doctorsByDepartment = {
-  kardiyoloji: ["Dr. Ahmet Yılmaz", "Dr. Elif Kaya"],
-  dahiliye: ["Dr. Ayşe Demir", "Dr. Murat Şahin"],
-  ortopedi: ["Dr. Mehmet Çelik"],
-  goz: ["Dr. Nilgün Er"],
-  noroloji: ["Dr. Serkan Aksoy"],
-  cildiye: ["Dr. Melis Toprak"],
-  kulak: ["Dr. Ceren Yalçın"],
-  psikiyatri: ["Dr. İrem Korkmaz"]
-};
-
-const department = document.getElementById("department");
-const doctor = document.getElementById("doctor");
-
-department.addEventListener("change", function () {
-  doctor.innerHTML = "<option>Doktor seçiniz</option>";
-  doctor.disabled = true;
-
-  const selected = this.value;
-  if (doctorsByDepartment[selected]) {
-    doctorsByDepartment[selected].forEach(d => {
-      const opt = document.createElement("option");
-      opt.textContent = d;
-      doctor.appendChild(opt);
+    // Modal Açma Buttonu
+    document.querySelector(".new-appointment-btn").addEventListener("click", () => {
+      modal.style.display = "flex";
     });
-    doctor.disabled = false;
-  }
-});
 
-/* KAYDET */
-function saveAppointment() {
-  alert("✅ Randevu başarıyla oluşturuldu.");
-  closeModal();
-}
-</script>
+    // Global Kapatma (HTML onclick="closeModal()" için)
+    window.closeModal = function () {
+      modal.style.display = "none";
+      // Reset inputs
+      patientSelect.value = "";
+      departmentSelect.value = "";
+      doctorSelect.innerHTML = '<option>Önce alan seçiniz</option>';
+      doctorSelect.disabled = true;
+      dateInput.value = "";
+      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+    }
 
+    // Kaydet/Oluştur
+    window.saveAppointment = async function () {
+      const patientId = patientSelect.value;
+      const doctorId = doctorSelect.value;
+      const slotId = timeSelect.value;
+      const dateVal = dateInput.value;
 
+      if (!patientId || !doctorId || !slotId || !dateVal) {
+        alert("Lütfen tüm alanları doldurunuz.");
+        return;
+      }
 
+      try {
+        const res = await fetch('/appointments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            patient_id: parseInt(patientId),
+            doctor_id: parseInt(doctorId),
+            slot_id: parseInt(slotId),
+            appointment_date: dateVal
+          })
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          alert("Randevu oluşturuldu!");
+          closeModal();
+          loadAppointments(); // Listeyi yenile
+        } else {
+          alert("Hata: " + (result.detail || "Oluşturulamadı"));
+        }
+      } catch (err) {
+        alert("Bağlantı hatası: " + err);
+      }
+    }
+
+    // İptal
+    window.cancelAppt = async function (id) {
+      if (!confirm("Randevuyu iptal etmek istediğinize emin misiniz?")) return;
+
+      try {
+        const res = await fetch(`/appointments/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert("Randevu iptal edildi.");
+          await loadAppointments();
+        } else {
+          alert("İptal edilemedi.");
+        }
+      } catch (err) { alert(err); }
+    }
+  </script>
 </body>
+
 </html>

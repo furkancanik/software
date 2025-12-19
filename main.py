@@ -263,11 +263,12 @@ class DoctorCreate(BaseModel):
 @app.get("/users")
 def get_all_users(db: Session = Depends(get_db)):
     try:
-        # Tüm kullanıcıları ve rollerini çek
+        # Tüm kullanıcıları, rollerini ve varsa patient_id'yi çek
         rows = db.execute(text("""
-            SELECT u.first_name, u.last_name, u.email, r.role_name
+            SELECT u.user_id, u.first_name, u.last_name, u.email, r.role_name, p.patient_id
             FROM Users u
             JOIN Roles r ON u.role_id = r.role_id
+            LEFT JOIN Patients p ON u.user_id = p.user_id
             WHERE u.is_active = 1
             ORDER BY u.created_at DESC
         """)).fetchall()
@@ -275,9 +276,11 @@ def get_all_users(db: Session = Depends(get_db)):
         users = []
         for r in rows:
             users.append({
-                "name": f"{r[0]} {r[1]}",
-                "email": r[2],
-                "role": r[3]
+                "user_id": r[0],
+                "name": f"{r[1]} {r[2]}",
+                "email": r[3],
+                "role": r[4],
+                "patient_id": r[5]
             })
         return users
     except Exception as e:
@@ -708,4 +711,47 @@ def update_password(user_id: int, passwords: PasswordUpdate, db: Session = Depen
         raise he
     except Exception as e:
         db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/all-appointments")
+def get_all_appointments(db: Session = Depends(get_db)):
+    """Tüm randevuları getir (Sekreter/Admin için)"""
+    try:
+        rows = db.execute(text("""
+            SELECT 
+                a.appointment_id,
+                a.appointment_date,
+                ts.start_time,
+                ts.end_time,
+                p_user.first_name as patient_first_name,
+                p_user.last_name as patient_last_name,
+                d_user.first_name as doctor_first_name,
+                d_user.last_name as doctor_last_name,
+                d.expertise,
+                ast.status_name
+            FROM Appointments a
+            JOIN Patients p ON a.patient_id = p.patient_id
+            JOIN Users p_user ON p.user_id = p_user.user_id
+            JOIN Doctors d ON a.doctor_id = d.doctor_id
+            JOIN Users d_user ON d.user_id = d_user.user_id
+            JOIN Time_Slots ts ON a.slot_id = ts.slot_id
+            JOIN Appointment_Status ast ON a.status_id = ast.status_id
+            ORDER BY a.appointment_date DESC, ts.start_time ASC
+        """)).fetchall()
+        
+        appointments = []
+        for row in rows:
+            appointments.append({
+                "appointment_id": row[0],
+                "appointment_date": str(row[1]),
+                "start_time": row[2],
+                "end_time": row[3],
+                "patient_name": f"{row[4]} {row[5]}",
+                "doctor_name": f"Dr. {row[6]} {row[7]}",
+                "expertise": row[8],
+                "status": row[9]
+            })
+        
+        return appointments
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
