@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sekreter - Randevu Yönetimi</title>
+  <link rel="stylesheet" href="sekreter_randevu_yonetimi.css">
+</head>
+<body>
+
+<div class="box">
+  <h2>Randevu Yönetimi</h2>
+  <p class="subtitle">Randevuları görüntüleyin ve yönetin</p>
+  <button class="new-appointment-btn">
+    ➕ Yeni Randevu Oluştur
+  </button>
+
+
+
+<div class="modal" id="appointmentModal">
+  <div class="modal-content">
+
+    <h3>Yeni Randevu Oluştur</h3>
+
+    <label>Hasta</label>
+    <select id="patient">
+      <option value="">Hasta seçiniz</option>
+      <option>Hümeyra Koçtemiz</option>
+      <option>Ayşe Demir</option>
+      <option>Mehmet Yılmaz</option>
+    </select>
+
+    <!-- ALAN / BÖLÜM -->
+<label>Alan</label>
+<div class="field">
+  <select id="department">
+    <option value="">Alan seçiniz</option>
+    <option value="kardiyoloji">Kardiyoloji</option>
+    <option value="dahiliye">Dahiliye</option>
+    <option value="ortopedi">Ortopedi</option>
+    <option value="goz">Göz Hastalıkları</option>
+    <option value="noroloji">Nöroloji</option>
+    <option value="cildiye">Cildiye</option>
+    <option value="kulak">Kulak Burun Boğaz</option>
+    <option value="psikiyatri">Psikiyatri</option>
+  </select>
+</div>
+
+<!-- DOKTOR -->
+<label>Doktor</label>
+<div class="field">
+  <span class="icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="#6366f1" stroke-width="2">
+      <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5z"/>
+      <path d="M2 22v-3c0-3.3 6.7-5 10-5s10 1.7 10 5v3"/>
+    </svg>
+  </span>
+
+  <select id="doctor" disabled>
+    <option>Önce alan seçiniz</option>
+  </select>
+</div>
+
+<!-- TARİH -->
+<label>Tarih</label>
+<div class="field">
+  <span class="icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="#6366f1" stroke-width="2">
+      <path d="M11 14h1v4"/>
+      <path d="M16 2v4"/>
+      <path d="M3 10h18"/>
+      <path d="M8 2v4"/>
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+    </svg>
+  </span>
+
+  <input type="date" id="date" required>
+</div>
+
+<!-- SAAT -->
+<label>Saat</label>
+<div class="field">
+  <span class="icon">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="#6366f1" stroke-width="2">
+      <path d="M12 6v6l4 2"/>
+      <circle cx="12" cy="12" r="10"/>
+    </svg>
+  </span>
+
+  <select id="time" required>
+    <option value="">Saat seçiniz</option>
+    <option>09:00</option>
+    <option>09:30</option>
+    <option>10:00</option>
+    <option>10:30</option>
+    <option>11:00</option>
+    <option>11:30</option>
+  </select>
+</div>
+
+
+    <div class="modal-actions">
+      <button class="cancel" onclick="closeModal()">İptal</button>
+      <button class="save" onclick="saveAppointment()">Kaydet</button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- RANDEVU KARTI -->
+  <div class="appointment-card">
+    <div class="info">
+      <p><strong>Hasta:</strong> Hümeyra Koçtemiz</p>
+      <p><strong>Bölüm:</strong> Kardiyoloji</p>
+      <p><strong>Doktor:</strong> Dr. Ahmet Yılmaz</p>
+      <p><strong>Tarih:</strong> 20.05.2025</p>
+      <p><strong>Saat:</strong> 10:30</p>
+      <p class="status pending">Durum: Beklemede</p>
+    </div>
+
+    <div class="actions">
+      <button class="approve">Onayla</button>
+      <button class="cancel">İptal Et</button>
+    </div>
+  </div>
+
+  <!-- RANDEVU KARTI -->
+  <div class="appointment-card">
+    <div class="info">
+      <p><strong>Hasta:</strong> Ayşe Demir</p>
+      <p><strong>Bölüm:</strong> Dahiliye</p>
+      <p><strong>Doktor:</strong> Dr. Selin Acar</p>
+      <p><strong>Tarih:</strong> 22.05.2025</p>
+      <p><strong>Saat:</strong> 14:00</p>
+      <p class="status approved">Durum: Onaylandı</p>
+    </div>
+
+    <div class="actions">
+      <button class="cancel">İptal Et</button>
+    </div>
+  </div>
+
+  <div class="back">
+    <a href="sekreter_dashboard.html">← Sekreter Paneline Dön</a>
+  </div>
+</div>
+
+
+
+<script>
+  
+  document.querySelectorAll(".approve").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const card = this.closest(".appointment-card");
+      card.querySelector(".status").textContent = "Durum: Onaylandı";
+      card.querySelector(".status").className = "status approved";
+      openModal("✅ Randevu Onaylandı", "Randevu başarıyla onaylandı.");
+      this.remove();
+    });
+  });
+
+  document.querySelectorAll(".cancel").forEach(btn => {
+    btn.addEventListener("click", function () {
+      const card = this.closest(".appointment-card");
+      card.querySelector(".status").textContent = "Durum: İptal Edildi";
+      card.querySelector(".status").className = "status canceled";
+      openModal("❌ Randevu İptal Edildi", "Randevu iptal edildi.");
+      card.querySelector(".actions").remove();
+    });
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+/* MODAL AÇ / KAPAT */
+const modal = document.getElementById("appointmentModal");
+const openBtn = document.querySelector(".new-appointment-btn");
+
+openBtn.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+function closeModal() {
+  modal.style.display = "none";
+}
+
+/* ALAN → DOKTOR */
+const doctorsByDepartment = {
+  kardiyoloji: ["Dr. Ahmet Yılmaz", "Dr. Elif Kaya"],
+  dahiliye: ["Dr. Ayşe Demir", "Dr. Murat Şahin"],
+  ortopedi: ["Dr. Mehmet Çelik"],
+  goz: ["Dr. Nilgün Er"],
+  noroloji: ["Dr. Serkan Aksoy"],
+  cildiye: ["Dr. Melis Toprak"],
+  kulak: ["Dr. Ceren Yalçın"],
+  psikiyatri: ["Dr. İrem Korkmaz"]
+};
+
+const department = document.getElementById("department");
+const doctor = document.getElementById("doctor");
+
+department.addEventListener("change", function () {
+  doctor.innerHTML = "<option>Doktor seçiniz</option>";
+  doctor.disabled = true;
+
+  const selected = this.value;
+  if (doctorsByDepartment[selected]) {
+    doctorsByDepartment[selected].forEach(d => {
+      const opt = document.createElement("option");
+      opt.textContent = d;
+      doctor.appendChild(opt);
+    });
+    doctor.disabled = false;
+  }
+});
+
+/* KAYDET */
+function saveAppointment() {
+  alert("✅ Randevu başarıyla oluşturuldu.");
+  closeModal();
+}
+</script>
+
+
+
+</body>
+</html>

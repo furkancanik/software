@@ -3,62 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <title>Sekreter Girişi</title>
-
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f4f7fb;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .box {
-      background: #fff;
-      padding: 35px;
-      border-radius: 18px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 360px;
-    }
-
-    h2 {
-      margin-bottom: 25px;
-      color: #1f2a37;
-    }
-
-    a {
-      display: block;
-      margin: 12px 0;
-      padding: 12px;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: bold;
-      color: white;
-      background-color: #6366f1; /* sekreter rengi */
-    }
-
-    a:hover {
-      opacity: 0.9;
-    }
-
-    .back {
-      background-color: #9ca3af;
-    }
-  </style>
+  <link rel="stylesheet" href="sekreter.css">
 </head>
 
 <body>
 
-  <div class="box">
-    <h2>Sekreter Girişi</h2>
+  <div class="login-box">
+    <div class="icon">👩‍💻</div>
 
-    <a href="sekreter_login.html">Giriş Yap</a>
-    <a href="index.html" class="back">Ana Sayfaya Dön</a>
+    <h2>Sekreter Girişi</h2>
+    <p class="subtitle">Email ve şifrenizle giriş yapın.</p>
+
+    <!-- ✅ FORM EKLENDİ -->
+    <form id="secretaryLoginForm">
+
+      <label>Email</label>
+      <!-- ✅ id eklendi -->
+      <input id="email" type="email" placeholder="sekreter@clinic.com" required>
+
+      <label>Şifre</label>
+      <!-- ✅ id eklendi -->
+      <input id="password" type="password" placeholder="123456" required>
+
+      <!-- ✅ submit olmalı -->
+      <button type="submit">Giriş Yap</button>
+
+    </form>
+
+    <div class="back-link">
+      <a href="ana_sayfa.html">← Ana Sayfaya Dön</a>
+    </div>
   </div>
+
+  <footer>
+    © 2025 Clinic Appointment Management System
+  </footer>
+
+  <script>
+    document.getElementById("secretaryLoginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // DEMO SEKRETER
+      const demoEmail = "sekreter@clinic.com";
+      const demoPassword = "123456";
+
+      if (email === demoEmail && password === demoPassword) {
+        window.location.href = "sekreter_dashboard.html";
+      } else {
+        alert("Email veya şifre hatalı!");
+      }
+    });
+  </script>
 
 </body>
 </html>
-
