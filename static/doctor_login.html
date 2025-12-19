@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klinik Randevu Sistemi | Doktor Girişi</title>
+
+  <link rel="stylesheet" href="doktor.css" />
+</head>
+
+<body>
+
+  <div class="page">
+    <div class="login-card">
+      <div class="icon">🧑‍⚕️</div>
+      <h1>Doktor Girişi</h1>
+      <p class="sub">Email/Username ve şifrenizle giriş yapın.</p>
+
+      <!-- Hata / Bilgi mesajları -->
+      <div id="msg" class="msg" aria-live="polite"></div>
+
+      <!-- FORM -->
+      <form id="loginForm" class="form">
+        <label>Email / Username</label>
+        <input id="username" type="text" placeholder="ornek@mail.com" autocomplete="username" />
+
+        <label>Şifre</label>
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+
+        <!-- 🔴 EKSİK OLAN BUYDU -->
+        <button type="submit" class="btn">Giriş Yap</button>
+      </form>
+
+      <a class="back" href="/">← Ana Sayfaya Dön</a>
+    </div>
+
+    <footer class="footer">© 2025 Clinic Appointment Management System</footer>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+
+      msg.className = "msg";
+      msg.textContent = "";
+
+      if (!u || !p) {
+        msg.classList.add("error");
+        msg.textContent = "Lütfen tüm alanları doldurun.";
+        return;
+      }
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: u,
+            password: p
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Doktor kontrolü
+          if (data.role_name === 'doctor') {
+            msg.classList.add("success");
+            msg.textContent = "Giriş başarılı.";
+
+            // Kullanıcı bilgilerini localStorage'a kaydet
+            localStorage.setItem('userInfo', JSON.stringify(data));
+
+            setTimeout(() => {
+              window.location.href = "doctor_dashboard.html";
+            }, 600);
+          } else {
+            msg.classList.add("error");
+            msg.textContent = "Bu sayfa sadece doktor kullanıcılar içindir.";
+          }
+        } else {
+          msg.classList.add("error");
+          msg.textContent = data.detail || "Kullanıcı adı veya şifre hatalı.";
+        }
+      } catch (error) {
+        msg.classList.add("error");
+        msg.textContent = "Bağlantı hatası: " + error.message;
+      }
+    });
+  </script>
+
+</body>
+
+</html>

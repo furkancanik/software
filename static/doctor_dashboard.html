@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard | Clinic Appointment System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Doktor dashboard CSS -->
+    <link rel="stylesheet" href="doctor_dashboard.css">
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <h1>Doctor Dashboard</h1>
+        <button class="logout-btn" onclick="openPasswordModal()"
+            style="margin-right:10px; background-color:#f59e0b; border:none; padding: 8px 16px; border-radius: 6px; color: white; cursor: pointer;">Password</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <!-- ===== ACTION BUTTONS ===== -->
+    <section class="actions">
+        <a href="#appointments" class="action-card">
+            🗓<span>My Appointments</span>
+        </a>
+
+        <a href="doctor_availability.html" class="action-card">
+            ⏰<span>Availability Settings</span>
+        </a>
+    </section>
+
+    <!-- ===== APPOINTMENTS LIST ===== -->
+    <section class="appointments" id="appointments">
+        <h2>Today’s Appointments</h2>
+
+        <div class="appointment-card scheduled">
+            <div>
+                <strong>Patient:</strong> Ayşe Kaya<br>
+                <strong>Date:</strong> 16.12.2025<br>
+                <strong>Time:</strong> 10:00
+            </div>
+            <span class="status">Scheduled</span>
+        </div>
+
+        <div class="appointment-card scheduled">
+            <div>
+                <strong>Patient:</strong> Mehmet Yılmaz<br>
+                <strong>Date:</strong> 16.12.2025<br>
+                <strong>Time:</strong> 11:30
+            </div>
+            <span class="status">Scheduled</span>
+        </div>
+
+        <div class="appointment-card cancelled">
+            <div>
+                <strong>Patient:</strong> Ali Demir<br>
+                <strong>Date:</strong> 16.12.2025<br>
+                <strong>Time:</strong> 13:00
+            </div>
+            <span class="status">Cancelled</span>
+        </div>
+    </section>
+
+    <footer class="footer">
+        © 2025 Clinic Appointment Management System
+    </footer>
+
+    <!-- PASSWORD MODAL -->
+    <div id="passwordModal" class="modal"
+        style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4);">
+        <div class="modal-content"
+            style="background-color:#fefefe; margin:15% auto; padding:20px; border:1px solid #888; width:300px; border-radius:10px; text-align: left;">
+            <span class="close" onclick="closePasswordModal()"
+                style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+            <h2 style="margin-top:0;">Change Password</h2>
+            <input type="password" id="currentPass" placeholder="Current Password"
+                style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+            <input type="password" id="newPass" placeholder="New Password"
+                style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+            <input type="password" id="confirmPass" placeholder="Confirm New Password"
+                style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+            <button onclick="changePassword()"
+                style="width:100%; padding:10px; background-color:#4f46e5; color:white; border:none; border-radius:5px; cursor:pointer;">Update</button>
+            <p id="passMsg" style="margin-top:10px; font-size:14px; text-align: center;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Kullanıcı bilgilerini al
+        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+        if (!userInfo.user_id) {
+            alert('Lütfen önce giriş yapın!');
+            window.location.href = 'doctor_login.html';
+        }
+
+        let doctorId = null;
+
+        // Sayfa yüklendiğinde doktor ID'sini al ve randevuları getir
+        window.addEventListener('DOMContentLoaded', async () => {
+            await getDoctorId();
+            if (doctorId) {
+                await loadAppointments();
+            }
+        });
+
+        async function getDoctorId() {
+            try {
+                const response = await fetch(`/users/${userInfo.user_id}/doctor-id`);
+                const data = await response.json();
+                doctorId = data.doctor_id;
+
+                // Doctor ID'yi localStorage'a kaydet
+                userInfo.doctor_id = doctorId;
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            } catch (error) {
+                console.error('Doktor ID alınamadı:', error);
+            }
+        }
+
+        async function loadAppointments() {
+            try {
+                const response = await fetch(`/doctors/${doctorId}/appointments`);
+                const appointments = await response.json();
+
+                const container = document.querySelector('.appointments');
+
+                // Başlığı koru, sadece randevu kartlarını temizle
+                const existingCards = container.querySelectorAll('.appointment-card');
+                existingCards.forEach(card => card.remove());
+
+                if (appointments.length === 0) {
+                    const noAppt = document.createElement('p');
+                    noAppt.style.textAlign = 'center';
+                    noAppt.style.color = '#6b7280';
+                    noAppt.textContent = 'Henüz randevunuz bulunmamaktadır.';
+                    container.appendChild(noAppt);
+                    return;
+                }
+
+                // Bugünün tarihini al
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                appointments.forEach(appt => {
+                    const apptDate = new Date(appt.appointment_date);
+                    apptDate.setHours(0, 0, 0, 0);
+
+                    // Sadece bugünün ve gelecek randevularını göster
+                    if (apptDate >= today && appt.status !== 'cancelled') {
+                        const card = document.createElement('div');
+                        card.className = 'appointment-card ' + appt.status;
+
+                        const formattedDate = new Date(appt.appointment_date).toLocaleDateString('tr-TR');
+                        const statusText = appt.status === 'scheduled' ? 'Scheduled' :
+                            appt.status === 'completed' ? 'Completed' : 'Cancelled';
+
+                        card.innerHTML = `
+                        <div>
+                            <strong>Patient:</strong> ${appt.patient_name}<br>
+                            <strong>Date:</strong> ${formattedDate}<br>
+                            <strong>Time:</strong> ${appt.start_time.substring(0, 5)}
+                        </div>
+                        <span class="status">${statusText}</span>
+                    `;
+
+                        container.appendChild(card);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Randevular yüklenemedi:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userInfo');
+            window.location.href = "/";
+        }
+
+        // Modal functions
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passMsg').textContent = '';
+            document.getElementById('currentPass').value = '';
+            document.getElementById('newPass').value = '';
+            document.getElementById('confirmPass').value = '';
+        }
+
+        async function changePassword() {
+            const currentPass = document.getElementById('currentPass').value;
+            const newPass = document.getElementById('newPass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+            const msg = document.getElementById('passMsg');
+
+            if (!currentPass || !newPass || !confirmPass) {
+                msg.style.color = 'red';
+                msg.textContent = 'Please fill all fields.';
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                msg.style.color = 'red';
+                msg.textContent = 'New passwords do not match.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/users/${userInfo.user_id}/password`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPass,
+                        new_password: newPass
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.style.color = 'green';
+                    msg.textContent = data.message;
+                    setTimeout(closePasswordModal, 2000);
+                } else {
+                    msg.style.color = 'red';
+                    msg.textContent = data.detail || 'Error updating password';
+                }
+            } catch (error) {
+                msg.style.color = 'red';
+                msg.textContent = 'Connection error';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

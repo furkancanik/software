@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Clinic Appointment System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+    <header class="header">
+        <h1>Admin Dashboard</h1>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <!-- ================= ACTION CARDS ================= -->
+    <section class="actions">
+        <a href="#users" class="action-card">
+            👥
+            <span>Users</span>
+        </a>
+
+        <a href="#doctors" class="action-card">
+            🩺
+            <span>Manage Doctors</span>
+        </a>
+    </section>
+
+    <!-- ================= USERS ================= -->
+    <section class="section" id="users">
+        <h2>Users</h2>
+        <p class="muted">
+            Role-based access control is applied. Admin can view system users.
+        </p>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ayşe Kaya</td>
+                        <td>ayse@mail.com</td>
+                        <td><span class="badge patient">Patient</span></td>
+                    </tr>
+                    <tr>
+                        <td>Mehmet Yılmaz</td>
+                        <td>mehmet@mail.com</td>
+                        <td><span class="badge secretary">Secretary</span></td>
+                    </tr>
+                    <tr>
+                        <td>Dr. Ali Demir</td>
+                        <td>ali@mail.com</td>
+                        <td><span class="badge doctor">Doctor</span></td>
+                    </tr>
+                    <tr>
+                        <td>Admin User</td>
+                        <td>admin@clinic.com</td>
+                        <td><span class="badge admin">Admin</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ================= MANAGE DOCTORS ================= -->
+    <section class="section" id="doctors">
+        <h2>Manage Doctors</h2>
+        <p class="muted">
+            Add or remove doctors (minimal admin operations).
+        </p>
+
+        <div class="msg" id="msg"></div>
+
+        <div class="grid">
+
+            <!-- ADD DOCTOR -->
+            <div class="card">
+                <h3>Add Doctor</h3>
+
+                <label>Doctor Name</label>
+                <input type="text" id="docName" placeholder="Dr. Name Surname">
+
+                <label>Email</label>
+                <input type="email" id="docEmail" placeholder="doctor@mail.com">
+
+                <label>Specialty</label>
+                <select id="docSpec"
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
+                    <option value="">Select Specialty</option>
+                    <option value="kardiyoloji">Kardiyoloji</option>
+                    <option value="dahiliye">Dahiliye</option>
+                    <option value="ortopedi">Ortopedi</option>
+                    <option value="goz">Göz Hastalıkları</option>
+                    <option value="noroloji">Nöroloji</option>
+                    <option value="cildiye">Cildiye</option>
+                    <option value="kulak">Kulak Burun Boğaz</option>
+                    <option value="psikiyatri">Psikiyatri</option>
+                </select>
+
+                <button class="btn primary" onclick="addDoctor()">Add Doctor</button>
+            </div>
+
+            <!-- DOCTOR LIST -->
+            <div class="card">
+                <h3>Doctor List</h3>
+
+                <div id="doctorList" class="doctor-list">
+
+                    <div class="doctor-item">
+                        <div>
+                            <strong>Dr. Ali Demir</strong>
+                            <span>ali@mail.com • Cardiology</span>
+                        </div>
+                        <button class="btn danger sm" onclick="removeDoctor(this)">Remove</button>
+                    </div>
+
+                    <div class="doctor-item">
+                        <div>
+                            <strong>Dr. Elif Yıldız</strong>
+                            <span>elif@mail.com • Dermatology</span>
+                        </div>
+                        <button class="btn danger sm" onclick="removeDoctor(this)">Remove</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        © 2025 Clinic Appointment Management System
+    </footer>
+
+    <!-- ================= JS ================= -->
+    <script>
+        // Sayfa yüklendiğinde kullanıcıları ve doktorları getir
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadUsers();
+            await loadDoctors();
+        });
+
+        function logout() {
+            localStorage.removeItem('userInfo');
+            window.location.href = "/";
+        }
+
+        // Kullanıcıları yükle
+        async function loadUsers() {
+            try {
+                const response = await fetch('/users');
+                const users = await response.json();
+
+                const tbody = document.querySelector('#users tbody');
+                tbody.innerHTML = '';
+
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+
+                    // Role badge renkleri
+                    let badgeClass = 'patient';
+                    if (user.role === 'doctor') badgeClass = 'doctor';
+                    else if (user.role === 'admin') badgeClass = 'admin';
+                    else if (user.role === 'secretary') badgeClass = 'secretary';
+
+                    tr.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td><span class="badge ${badgeClass}">${user.role}</span></td>
+      `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Kullanıcılar yüklenemedi:', error);
+            }
+        }
+
+        // Doktorları yükle
+        async function loadDoctors() {
+            try {
+                const response = await fetch('/doctors');
+                const doctors = await response.json();
+
+                const list = document.getElementById('doctorList');
+                list.innerHTML = '';
+
+                doctors.forEach(doctor => {
+                    const item = document.createElement('div');
+                    item.className = 'doctor-item';
+                    item.innerHTML = `
+        <div>
+          <strong>Dr. ${doctor.first_name} ${doctor.last_name}</strong>
+          <span>${doctor.email} • ${doctor.expertise}</span>
+        </div>
+        <button class="btn danger sm" onclick="removeDoctor('${doctor.email}')">Remove</button>
+      `;
+                    list.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Doktorlar yüklenemedi:', error);
+            }
+        }
+
+        async function addDoctor() {
+            const name = docName.value.trim();
+            const email = docEmail.value.trim();
+            const spec = docSpec.value.trim();
+            const msg = document.getElementById("msg");
+
+            msg.textContent = "";
+
+            if (!name || !email || !spec) {
+                msg.className = "msg error";
+                msg.textContent = "Please fill in all fields.";
+                return;
+            }
+
+            // İsmi parçala (first_name ve last_name)
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || firstName;
+
+            try {
+                const response = await fetch('/admin/doctors', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: email,
+                        password: '12345', // Varsayılan şifre
+                        expertise: spec
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.className = "msg success";
+                    msg.textContent = data.message || "Doctor added successfully.";
+
+                    // Formu temizle
+                    docName.value = "";
+                    docEmail.value = "";
+                    docSpec.value = "";
+
+                    // Listeyi yenile
+                    await loadDoctors();
+                } else {
+                    msg.className = "msg error";
+                    msg.textContent = data.detail || "Failed to add doctor.";
+                }
+            } catch (error) {
+                msg.className = "msg error";
+                msg.textContent = "Connection error: " + error.message;
+            }
+        }
+
+        async function removeDoctor(email) {
+            if (!confirm(`Are you sure you want to remove doctor with email: ${email}?`)) {
+                return;
+            }
+
+            const msg = document.getElementById("msg");
+
+            try {
+                const response = await fetch(`/admin/doctors/${encodeURIComponent(email)}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.className = "msg success";
+                    msg.textContent = data.message || "Doctor removed successfully.";
+
+                    // Listeyi yenile
+                    await loadDoctors();
+                } else {
+                    msg.className = "msg error";
+                    msg.textContent = data.detail || "Failed to remove doctor.";
+                }
+            } catch (error) {
+                msg.className = "msg error";
+                msg.textContent = "Connection error: " + error.message;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
