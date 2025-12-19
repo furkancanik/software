@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8">
   <title>Klinik Randevu Sistemi</title>
@@ -27,7 +28,8 @@
     .container {
       display: flex;
       gap: 30px;
-      flex-wrap: wrap; /* 4 kutu için taşmayı engeller */
+      flex-wrap: wrap;
+      /* 4 kutu için taşmayı engeller */
       justify-content: center;
     }
 
@@ -36,7 +38,7 @@
       height: 260px;
       background-color: white;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -48,7 +50,7 @@
 
     .role-box:hover {
       transform: translateY(-6px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     }
 
     .icon {
@@ -74,22 +76,22 @@
   <h1>Klinik Randevu Sistemi</h1>
 
   <div class="container">
-    <a href="/static/hasta_giris_secim.html" class="role-box">
+    <a href="hasta_giris_secim.html" class="role-box">
       <div class="icon">👤</div>
       <div class="role-title">Hasta Girişi</div>
     </a>
 
-    <a href="/static/doctor_login.html" class="role-box">
+    <a href="doctor_login.html" class="role-box">
       <div class="icon">👨‍⚕️</div>
       <div class="role-title">Doktor Girişi</div>
     </a>
 
-    <a href="/static/sekreter.html" class="role-box">
+    <a href="sekreter.html" class="role-box">
       <div class="icon">🧑‍💼</div>
       <div class="role-title">Sekreter Girişi</div>
     </a>
 
-    <a href="/static/admin_login.html" class="role-box">
+    <a href="admin_login.html" class="role-box">
       <div class="icon">👑</div>
       <div class="role-title">Admin Girişi</div>
     </a>
@@ -100,4 +102,5 @@
   </div>
 
 </body>
+
 </html>

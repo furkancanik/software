@@ -58,6 +58,10 @@ class AppointmentCreate(BaseModel):
     # user_id: int # Güvenlik için bunu login olan kullanıcıdan alacağız ama şimdilik client gönderiyor
     user_id: Optional[int] = None
 
+class PasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+
 # ==========================================
 # 3. YARDIMCI FONKSİYONLAR (Stored Procedure Mantığı)
 # ==========================================
@@ -172,7 +176,7 @@ def logic_create_appointment(db: Session, appt: AppointmentCreate):
 
 @app.get("/")
 def read_root():
-    return FileResponse('static/ana_sayfa.html')
+    return FileResponse('static/index.html')
 
 @app.post("/register")
 def register_patient(user: PatientRegister, db: Session = Depends(get_db)):
@@ -473,4 +477,235 @@ def get_slots(doctor_id: int, date: str, db: Session = Depends(get_db)):
         return valid_slots
 
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# 6. HASTA RANDEVU ENDPOINTLERİ
+# ==========================================
+
+@app.get("/patients/{patient_id}/appointments")
+def get_patient_appointments(patient_id: int, db: Session = Depends(get_db)):
+    """Hastanın tüm randevularını getir"""
+    try:
+        rows = db.execute(text("""
+            SELECT 
+                a.appointment_id,
+                a.appointment_date,
+                ts.start_time,
+                ts.end_time,
+                u.first_name as doctor_first_name,
+                u.last_name as doctor_last_name,
+                d.expertise,
+                ast.status_name
+            FROM Appointments a
+            JOIN Doctors d ON a.doctor_id = d.doctor_id
+            JOIN Users u ON d.user_id = u.user_id
+            JOIN Time_Slots ts ON a.slot_id = ts.slot_id
+            JOIN Appointment_Status ast ON a.status_id = ast.status_id
+            WHERE a.patient_id = :pid
+            ORDER BY a.appointment_date DESC, ts.start_time DESC
+        """), {"pid": patient_id}).fetchall()
+        
+        appointments = []
+        for row in rows:
+            appointments.append({
+                "appointment_id": row[0],
+                "appointment_date": str(row[1]),
+                "start_time": row[2],
+                "end_time": row[3],
+                "doctor_name": f"Dr. {row[4]} {row[5]}",
+                "expertise": row[6],
+                "status": row[7]
+            })
+        
+        return appointments
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/appointments/{appointment_id}")
+def cancel_appointment(appointment_id: int, db: Session = Depends(get_db)):
+    """Randevuyu iptal et"""
+    try:
+        # Cancelled status ID'sini bul
+        status_row = db.execute(text(
+            "SELECT status_id FROM Appointment_Status WHERE status_name = 'cancelled'"
+        )).fetchone()
+        
+        if not status_row:
+            raise HTTPException(status_code=500, detail="Cancelled status bulunamadı")
+        
+        cancelled_status_id = status_row[0]
+        
+        # Randevuyu iptal et
+        result = db.execute(text("""
+            UPDATE Appointments 
+            SET status_id = :status_id 
+            WHERE appointment_id = :aid
+        """), {"status_id": cancelled_status_id, "aid": appointment_id})
+        
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Randevu bulunamadı")
+        
+        db.commit()
+        return {"message": "Randevu başarıyla iptal edildi"}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# 7. DOKTOR RANDEVU ENDPOINTLERİ
+# ==========================================
+
+@app.get("/doctors/{doctor_id}/appointments")
+def get_doctor_appointments(doctor_id: int, db: Session = Depends(get_db)):
+    """Doktorun tüm randevularını getir"""
+    try:
+        rows = db.execute(text("""
+            SELECT 
+                a.appointment_id,
+                a.appointment_date,
+                ts.start_time,
+                ts.end_time,
+                u.first_name as patient_first_name,
+                u.last_name as patient_last_name,
+                ast.status_name
+            FROM Appointments a
+            JOIN Patients p ON a.patient_id = p.patient_id
+            JOIN Users u ON p.user_id = u.user_id
+            JOIN Time_Slots ts ON a.slot_id = ts.slot_id
+            JOIN Appointment_Status ast ON a.status_id = ast.status_id
+            WHERE a.doctor_id = :did
+            ORDER BY a.appointment_date DESC, ts.start_time DESC
+        """), {"did": doctor_id}).fetchall()
+        
+        appointments = []
+        for row in rows:
+            appointments.append({
+                "appointment_id": row[0],
+                "appointment_date": str(row[1]),
+                "start_time": row[2],
+                "end_time": row[3],
+                "patient_name": f"{row[4]} {row[5]}",
+                "status": row[6]
+            })
+        
+        return appointments
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# 8. DOKTOR ÇALIŞMA SAATLERİ ENDPOINTLERİ
+# ==========================================
+
+class WorkingHoursCreate(BaseModel):
+    doctor_id: int
+    day_of_week: str  # Mon, Tue, Wed, Thu, Fri, Sat, Sun
+    start_time: str   # HH:MM:SS format
+    end_time: str     # HH:MM:SS format
+
+@app.get("/doctors/{doctor_id}/working-hours")
+def get_doctor_working_hours(doctor_id: int, db: Session = Depends(get_db)):
+    """Doktorun çalışma saatlerini getir"""
+    try:
+        rows = db.execute(text("""
+            SELECT day_of_week, start_time, end_time
+            FROM Doctor_Working_Hours
+            WHERE doctor_id = :did
+            ORDER BY 
+                CASE day_of_week
+                    WHEN 'Mon' THEN 1
+                    WHEN 'Tue' THEN 2
+                    WHEN 'Wed' THEN 3
+                    WHEN 'Thu' THEN 4
+                    WHEN 'Fri' THEN 5
+                    WHEN 'Sat' THEN 6
+                    WHEN 'Sun' THEN 7
+                END
+        """), {"did": doctor_id}).fetchall()
+        
+        working_hours = []
+        for row in rows:
+            working_hours.append({
+                "day_of_week": row[0],
+                "start_time": row[1],
+                "end_time": row[2]
+            })
+        
+        return working_hours
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/doctors/{doctor_id}/working-hours")
+def set_doctor_working_hours(doctor_id: int, hours: List[WorkingHoursCreate], db: Session = Depends(get_db)):
+    """Doktorun çalışma saatlerini kaydet (önce mevcut olanları sil, sonra yenilerini ekle)"""
+    try:
+        # Önce mevcut çalışma saatlerini sil
+        db.execute(text("DELETE FROM Doctor_Working_Hours WHERE doctor_id = :did"), {"did": doctor_id})
+        
+        # Yeni çalışma saatlerini ekle
+        for hour in hours:
+            db.execute(text("""
+                INSERT INTO Doctor_Working_Hours (doctor_id, day_of_week, start_time, end_time)
+                VALUES (:did, :day, :start, :end)
+            """), {
+                "did": doctor_id,
+                "day": hour.day_of_week,
+                "start": hour.start_time,
+                "end": hour.end_time
+            })
+        
+        db.commit()
+        return {"message": "Çalışma saatleri başarıyla kaydedildi"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# 9. DOKTOR ID'Sİ BULMA ENDPOINTİ
+# ==========================================
+
+@app.get("/users/{user_id}/doctor-id")
+def get_doctor_id_by_user_id(user_id: int, db: Session = Depends(get_db)):
+    """User ID'den Doctor ID'yi bul"""
+    try:
+        row = db.execute(text("""
+            SELECT doctor_id FROM Doctors WHERE user_id = :uid
+        """), {"uid": user_id}).fetchone()
+        
+        if not row:
+            raise HTTPException(status_code=404, detail="Doktor bulunamadı")
+        
+        return {"doctor_id": row[0]}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# 10. KULLANICI İŞLEMLERİ
+# ==========================================
+
+@app.put("/users/{user_id}/password")
+def update_password(user_id: int, passwords: PasswordUpdate, db: Session = Depends(get_db)):
+    """Kullanıcının şifresini güncelle"""
+    try:
+        user = db.execute(text("SELECT user_id, password FROM Users WHERE user_id = :uid"), {"uid": user_id}).fetchone()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı")
+        
+        if user[1] != passwords.current_password:
+            raise HTTPException(status_code=400, detail="Mevcut şifre yanlış")
+        
+        db.execute(text("UPDATE Users SET password = :new_pass WHERE user_id = :uid"), 
+                   {"new_pass": passwords.new_password, "uid": user_id})
+        
+        db.commit()
+        return {"message": "Şifre başarıyla güncellendi"}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))

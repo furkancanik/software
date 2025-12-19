@@ -45,7 +45,6 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>İşlem</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,7 +85,6 @@
         <div class="grid">
 
             <!-- ADD DOCTOR -->
-            <!-- ADD DOCTOR -->
             <div class="card">
                 <h3>Add Doctor</h3>
 
@@ -96,24 +94,21 @@
                 <label>Email</label>
                 <input type="email" id="docEmail" placeholder="doctor@mail.com">
 
-                <label>Password</label>
-                <input type="password" id="docPass" placeholder="••••••••">
-
                 <label>Specialty</label>
                 <select id="docSpec"
-                    style="width:100%; height:40px; border-radius:10px; border:1px solid #ddd; padding:0 10px;">
-                    <option value="">Seçiniz</option>
-                    <option value="Cardiology">Cardiology</option>
-                    <option value="Dermatology">Dermatology</option>
-                    <option value="Neurology">Neurology</option>
-                    <option value="Orthopedics">Orthopedics</option>
-                    <option value="Pediatrics">Pediatrics</option>
-                    <option value="Göz">Göz Hastalıkları</option>
-                    <option value="Dahiliye">Dahiliye</option>
-                    <option value="Cildiye">Cildiye</option>
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
+                    <option value="">Select Specialty</option>
+                    <option value="kardiyoloji">Kardiyoloji</option>
+                    <option value="dahiliye">Dahiliye</option>
+                    <option value="ortopedi">Ortopedi</option>
+                    <option value="goz">Göz Hastalıkları</option>
+                    <option value="noroloji">Nöroloji</option>
+                    <option value="cildiye">Cildiye</option>
+                    <option value="kulak">Kulak Burun Boğaz</option>
+                    <option value="psikiyatri">Psikiyatri</option>
                 </select>
 
-                <button class="btn primary" onclick="addDoctor()" style="margin-top:15px;">Add Doctor</button>
+                <button class="btn primary" onclick="addDoctor()">Add Doctor</button>
             </div>
 
             <!-- DOCTOR LIST -->
@@ -150,172 +145,157 @@
 
     <!-- ================= JS ================= -->
     <script>
-        // Sayfa yüklendiğinde kullanıcı listesini çek
-        document.addEventListener("DOMContentLoaded", loadUsers);
-        document.addEventListener("DOMContentLoaded", loadDoctors); // Doktor listesini (silme için) de buraya koyabiliriz ama şimdilik "Manage Doctors" kısmı Users ile aynı yerden veriyi alabilir veya ayrı `GET /doctors` kullanabiliriz.
-        // Basitlik olsun diye yukarıdaki tabloda herkes görünüyor.
-        // Aşağıdaki "Doctor List" kısmını güncellemek için `GET /doctors` endpointini kullanalım.
-
-        async function loadUsers() {
-            try {
-                const res = await fetch('/users');
-                const users = await res.json();
-
-                const tbody = document.querySelector("#users tbody");
-                tbody.innerHTML = "";
-
-                users.forEach(u => {
-                    // Doktorları bu tabloda gösterme
-                    if (u.role === 'doctor') return;
-
-                    let badgeClass = "secondary";
-                    if (u.role === 'admin') badgeClass = "admin";
-                    if (u.role === 'patient') badgeClass = "patient";
-                    if (u.role === 'secretary') badgeClass = "secretary";
-
-                    const tr = document.createElement("tr");
-
-                    let actionHtml = "";
-                    // Admin harici kullanıcılar için Sil butonu
-                    if (u.role !== 'admin') {
-                        actionHtml = `<button class="btn danger sm" onclick="removeUser('${u.email}')">Sil</button>`;
-                    }
-
-                    tr.innerHTML = `
-                        <td>${u.name}</td>
-                        <td>${u.email}</td>
-                        <td><span class="badge ${badgeClass}">${u.role}</span></td>
-                        <td>${actionHtml}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-            } catch (err) {
-                console.error("Kullanıcılar yüklenemedi", err);
-            }
-        }
-
-        async function loadDoctors() {
-            try {
-                const res = await fetch('/doctors');
-                const doctors = await res.json();
-
-                const list = document.getElementById("doctorList");
-                list.innerHTML = ""; // Temizle
-
-                doctors.forEach(d => {
-                    const item = document.createElement("div");
-                    item.className = "doctor-item";
-                    item.innerHTML = `
-                        <div>
-                            <strong>Dr. ${d.first_name} ${d.last_name}</strong>
-                            <span>${d.email} • <span style="color:#2563eb; font-weight:500;">${d.expertise}</span></span>
-                        </div>
-                        <button class="btn danger sm" onclick="removeDoctor('${d.email}')">Remove</button>
-                    `;
-                    list.appendChild(item);
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        }
+        // Sayfa yüklendiğinde kullanıcıları ve doktorları getir
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadUsers();
+            await loadDoctors();
+        });
 
         function logout() {
-            window.location.href = "/static/ana_sayfa.html";
+            localStorage.removeItem('userInfo');
+            window.location.href = "/";
+        }
+
+        // Kullanıcıları yükle
+        async function loadUsers() {
+            try {
+                const response = await fetch('/users');
+                const users = await response.json();
+
+                const tbody = document.querySelector('#users tbody');
+                tbody.innerHTML = '';
+
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+
+                    // Role badge renkleri
+                    let badgeClass = 'patient';
+                    if (user.role === 'doctor') badgeClass = 'doctor';
+                    else if (user.role === 'admin') badgeClass = 'admin';
+                    else if (user.role === 'secretary') badgeClass = 'secretary';
+
+                    tr.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td><span class="badge ${badgeClass}">${user.role}</span></td>
+      `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Kullanıcılar yüklenemedi:', error);
+            }
+        }
+
+        // Doktorları yükle
+        async function loadDoctors() {
+            try {
+                const response = await fetch('/doctors');
+                const doctors = await response.json();
+
+                const list = document.getElementById('doctorList');
+                list.innerHTML = '';
+
+                doctors.forEach(doctor => {
+                    const item = document.createElement('div');
+                    item.className = 'doctor-item';
+                    item.innerHTML = `
+        <div>
+          <strong>Dr. ${doctor.first_name} ${doctor.last_name}</strong>
+          <span>${doctor.email} • ${doctor.expertise}</span>
+        </div>
+        <button class="btn danger sm" onclick="removeDoctor('${doctor.email}')">Remove</button>
+      `;
+                    list.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Doktorlar yüklenemedi:', error);
+            }
         }
 
         async function addDoctor() {
-            const name = document.getElementById("docName").value.trim(); // Ad Soyad bekliyoruz ama backend fname/lname istiyor
-            const email = document.getElementById("docEmail").value.trim();
-            const pass = document.getElementById("docPass").value.trim();
-            const spec = document.getElementById("docSpec").value;
+            const name = docName.value.trim();
+            const email = docEmail.value.trim();
+            const spec = docSpec.value.trim();
             const msg = document.getElementById("msg");
 
             msg.textContent = "";
 
-            if (!name || !email || !pass || !spec) {
+            if (!name || !email || !spec) {
                 msg.className = "msg error";
-                msg.textContent = "Lütfen tüm alanları doldurun.";
+                msg.textContent = "Please fill in all fields.";
                 return;
             }
 
-            // İsim ayırma (Basitçe ilk boşluktan ayırıyoruz)
-            const parts = name.split(" ");
-            const fname = parts[0];
-            const lname = parts.slice(1).join(" ") || "Doctor";
+            // İsmi parçala (first_name ve last_name)
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || firstName;
 
             try {
-                const res = await fetch('/admin/doctors', {
+                const response = await fetch('/admin/doctors', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
-                        first_name: fname,
-                        last_name: lname,
+                        first_name: firstName,
+                        last_name: lastName,
                         email: email,
-                        password: pass,
+                        password: '12345', // Varsayılan şifre
                         expertise: spec
                     })
                 });
 
-                if (res.ok) {
+                const data = await response.json();
+
+                if (response.ok) {
                     msg.className = "msg success";
-                    msg.textContent = "Doktor başarıyla eklendi.";
-                    // Listeleri güncelle
-                    loadUsers();
-                    loadDoctors();
+                    msg.textContent = data.message || "Doctor added successfully.";
+
                     // Formu temizle
-                    document.getElementById("docName").value = "";
-                    document.getElementById("docEmail").value = "";
-                    document.getElementById("docPass").value = "";
+                    docName.value = "";
+                    docEmail.value = "";
+                    docSpec.value = "";
+
+                    // Listeyi yenile
+                    await loadDoctors();
                 } else {
-                    const data = await res.json();
                     msg.className = "msg error";
-                    msg.textContent = data.detail || "Hata oluştu.";
+                    msg.textContent = data.detail || "Failed to add doctor.";
                 }
-            } catch (err) {
+            } catch (error) {
                 msg.className = "msg error";
-                msg.textContent = "Bağlantı hatası: " + err.message;
+                msg.textContent = "Connection error: " + error.message;
             }
         }
 
         async function removeDoctor(email) {
-            if (!confirm(email + " silinecek. Emin misiniz?")) return;
-
-            try {
-                const res = await fetch(`/admin/doctors/${email}`, {
-                    method: 'DELETE'
-                });
-
-                if (res.ok) {
-                    // Listeleri güncelle
-                    loadUsers();
-                    loadDoctors();
-                } else {
-                    alert("Silinemedi.");
-                }
-            } catch (e) {
-                alert("Hata: " + e.message);
+            if (!confirm(`Are you sure you want to remove doctor with email: ${email}?`)) {
+                return;
             }
-        }
-        async function removeUser(email) {
-            if (!confirm(email + " kullanıcısı silinecek. Emin misiniz?")) return;
+
+            const msg = document.getElementById("msg");
 
             try {
-                const res = await fetch(`/admin/users/${email}`, {
+                const response = await fetch(`/admin/doctors/${encodeURIComponent(email)}`, {
                     method: 'DELETE'
                 });
 
-                if (res.ok) {
-                    const data = await res.json();
-                    alert(data.message);
-                    // Listeleri güncelle
-                    loadUsers();
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.className = "msg success";
+                    msg.textContent = data.message || "Doctor removed successfully.";
+
+                    // Listeyi yenile
+                    await loadDoctors();
                 } else {
-                    const data = await res.json();
-                    alert("Hata: " + (data.detail || "Silinemedi."));
+                    msg.className = "msg error";
+                    msg.textContent = data.detail || "Failed to remove doctor.";
                 }
-            } catch (e) {
-                alert("Hata: " + e.message);
+            } catch (error) {
+                msg.className = "msg error";
+                msg.textContent = "Connection error: " + error.message;
             }
         }
     </script>

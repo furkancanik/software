@@ -141,16 +141,16 @@ VALUES ('secretary@clinic.com', 'secretary',
 
 # Doctors Setup Helper
 doctors = [
-    ('dr.smith@clinic.com', '12345', 'John', 'Smith', 'Cardiology', 
+    ('dr.smith@clinic.com', '12345', 'John', 'Smith', 'kardiyoloji', 
      [('Mon','09:00:00','12:00:00'), ('Tue','09:00:00','12:00:00'), ('Wed','09:00:00','12:00:00')]),
      
-    ('dr.brown@clinic.com', '12345', 'Emily', 'Brown', 'Dermatology',
+    ('dr.brown@clinic.com', '12345', 'Emily', 'Brown', 'cildiye',
      [('Mon','10:00:00','13:00:00'), ('Thu','10:00:00','13:00:00'), ('Fri','10:00:00','13:00:00')]),
      
-    ('dr.jones@clinic.com', '12345', 'Michael', 'Jones', 'Neurology',
+    ('dr.jones@clinic.com', '12345', 'Michael', 'Jones', 'noroloji',
      [('Tue','08:30:00','11:30:00'), ('Wed','08:30:00','11:30:00'), ('Thu','08:30:00','11:30:00')]),
      
-    ('dr.wilson@clinic.com', '12345', 'Sarah', 'Wilson', 'Orthopedics',
+    ('dr.wilson@clinic.com', '12345', 'Sarah', 'Wilson', 'ortopedi',
      [('Mon','11:00:00','15:00:00'), ('Wed','11:00:00','15:00:00'), ('Fri','11:00:00','15:00:00')]),
 ]
 

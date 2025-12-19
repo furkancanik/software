@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Randevularım</title>
+  <link rel="stylesheet" href="randevularim.css">
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Randevularım</h2>
+    <div id="notification" class="notification">
+      Randevunuz iptal edildi.
+    </div>
+
+
+    <div id="appointments">
+
+      <div class="appointment-card">
+        <div class="info">
+          <p><strong>Alan:</strong> Kardiyoloji</p>
+          <p><strong>Doktor:</strong> Dr. Ahmet Yılmaz</p>
+          <p><strong>Tarih:</strong> 20.05.2025</p>
+          <p><strong>Saat:</strong> 10:30</p>
+          <p class="status active">Durum: Aktif</p>
+        </div>
+        <button class="cancel-btn">İptal Et</button>
+      </div>
+
+      <div class="appointment-card">
+        <div class="info">
+          <p><strong>Alan:</strong> Dahiliye</p>
+          <p><strong>Doktor:</strong> Dr. Ayşe Demir</p>
+          <p><strong>Tarih:</strong> 10.04.2025</p>
+          <p><strong>Saat:</strong> 14:00</p>
+          <p class="status past">Durum: Geçmiş</p>
+        </div>
+        <button class="cancel-btn">İptal Et</button>
+      </div>
+
+    </div>
+
+    <div class="back">
+      <a href="hasta_dashboard.html">← Hasta Paneline Dön</a>
+    </div>
+  </div>
+
+  <div id="cancelModal" class="modal">
+    <div class="modal-content">
+      <h3>Randevuyu iptal etmek istiyor musunuz?</h3>
+      <p>Bu işlem geri alınamaz.</p>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeCancelModal()">Vazgeç</button>
+        <button class="btn-danger" onclick="confirmCancel()">Evet, İptal Et</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Kullanıcı bilgilerini al
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+    if (!userInfo.user_id) {
+      alert('Lütfen önce giriş yapın!');
+      window.location.href = 'login.html';
+    }
+
+    let selectedAppointmentId = null;
+    let selectedCard = null;
+
+    // Sayfa yüklendiğinde randevuları getir
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadAppointments();
+    });
+
+    async function loadAppointments() {
+      try {
+        const response = await fetch(`/patients/${userInfo.user_id}/appointments`);
+        const appointments = await response.json();
+
+        const container = document.getElementById('appointments');
+        container.innerHTML = '';
+
+        if (appointments.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: #6b7280;">Henüz randevunuz bulunmamaktadır.</p>';
+          return;
+        }
+
+        appointments.forEach(appt => {
+          const card = document.createElement('div');
+          card.className = 'appointment-card';
+
+          // Tarih formatla
+          const date = new Date(appt.appointment_date);
+          const formattedDate = date.toLocaleDateString('tr-TR');
+
+          // Status kontrolü
+          const isPast = new Date(appt.appointment_date) < new Date();
+          const isCancelled = appt.status === 'cancelled';
+          const statusClass = isCancelled ? 'cancelled' : (isPast ? 'past' : 'active');
+          const statusText = isCancelled ? 'İptal Edildi' : (isPast ? 'Geçmiş' : 'Aktif');
+
+          card.innerHTML = `
+          <div class="info">
+            <p><strong>Alan:</strong> ${appt.expertise}</p>
+            <p><strong>Doktor:</strong> ${appt.doctor_name}</p>
+            <p><strong>Tarih:</strong> ${formattedDate}</p>
+            <p><strong>Saat:</strong> ${appt.start_time.substring(0, 5)}</p>
+            <p class="status ${statusClass}">Durum: ${statusText}</p>
+          </div>
+          ${!isCancelled && !isPast ? `<button class="cancel-btn" data-id="${appt.appointment_id}">İptal Et</button>` : ''}
+        `;
+
+          container.appendChild(card);
+        });
+
+        // İptal butonlarına event listener ekle
+        document.querySelectorAll('.cancel-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            selectedAppointmentId = this.getAttribute('data-id');
+            selectedCard = this.closest('.appointment-card');
+            document.getElementById('cancelModal').style.display = 'flex';
+          });
+        });
+
+      } catch (error) {
+        console.error('Randevular yüklenemedi:', error);
+        document.getElementById('appointments').innerHTML =
+          '<p style="text-align: center; color: #ef4444;">Randevular yüklenirken hata oluştu!</p>';
+      }
+    }
+
+    function closeCancelModal() {
+      document.getElementById('cancelModal').style.display = 'none';
+    }
+
+    async function confirmCancel() {
+      if (!selectedAppointmentId) return;
+
+      try {
+        const response = await fetch(`/appointments/${selectedAppointmentId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (selectedCard) {
+            selectedCard.remove();
+          }
+          closeCancelModal();
+          showNotification();
+
+          // Listeyi yenile
+          await loadAppointments();
+        } else {
+          alert('Randevu iptal edilemedi: ' + (data.detail || 'Bilinmeyen hata'));
+        }
+      } catch (error) {
+        alert('Bağlantı hatası: ' + error.message);
+      }
+    }
+
+    function showNotification() {
+      const notif = document.getElementById('notification');
+      notif.style.display = 'block';
+
+      setTimeout(() => {
+        notif.style.display = 'none';
+      }, 2500);
+    }
+  </script>
+
+
+
+
+
+</body>
+
+</html>

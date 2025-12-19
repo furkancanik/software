@@ -10,30 +10,131 @@
 <body>
 
   <div class="dashboard">
-    <h2>Hasta Paneli</h2>
-    <p class="welcome">Hoş geldiniz</p>
+    <h2>HOŞ GELDİNİZ</h2>
+    <p class="welcome" id="welcomeText">Sayın Hastamız;</p>
 
     <div class="description">
-      Buradan randevu alabilir, randevularınızı görüntüleyebilirsiniz.
+      Buradan randevu alabilir, mevcut randevularınızı görüntüleyebilirsiniz.
     </div>
 
     <div class="cards">
-      <a href="/static/randevu_al.html" class="card">
+      <a href="randevu_al.html" class="card">
         <div class="icon">📅</div>
         <div class="title">Randevu Al</div>
       </a>
 
-      <!-- <a href="randevularim.html" class="card">
+      <a href="randevularim.html" class="card">
         <div class="icon">📋</div>
         <div class="title">Randevularım</div>
-      </a> -->
+      </a>
 
-      <a href="/static/ana_sayfa.html" class="card" onclick="localStorage.removeItem('user_info');">
+      <a href="#" onclick="openPasswordModal(); return false;" class="card">
+        <div class="icon">🔑</div>
+        <div class="title">Şifre Değiştir</div>
+      </a>
+
+      <a href="#" onclick="logout(); return false;" class="card">
         <div class="icon">🚪</div>
         <div class="title">Çıkış Yap</div>
       </a>
     </div>
   </div>
+
+  <!-- PASSWORD MODAL -->
+  <div id="passwordModal" class="modal"
+    style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4);">
+    <div class="modal-content"
+      style="background-color:#fefefe; margin:15% auto; padding:20px; border:1px solid #888; width:300px; border-radius:10px; text-align: left;">
+      <span class="close" onclick="closePasswordModal()"
+        style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
+      <h2 style="margin-top:0; color: #333;">Şifre Değiştir</h2>
+      <input type="password" id="currentPass" placeholder="Mevcut Şifre"
+        style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+      <input type="password" id="newPass" placeholder="Yeni Şifre"
+        style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+      <input type="password" id="confirmPass" placeholder="Yeni Şifre Tekrar"
+        style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
+      <button onclick="changePassword()"
+        style="width:100%; padding:10px; background-color:#4f46e5; color:white; border:none; border-radius:5px; cursor:pointer;">Güncelle</button>
+      <p id="passMsg" style="margin-top:10px; font-size:14px; text-align: center;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Kullanıcı bilgilerini al ve hoşgeldin mesajını güncelle
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+    if (userInfo.first_name && userInfo.last_name) {
+      document.getElementById('welcomeText').textContent =
+        `Sayın ${userInfo.first_name} ${userInfo.last_name};`;
+    }
+
+    function logout() {
+      localStorage.removeItem('userInfo');
+      window.location.href = '/';
+    }
+
+    // Modal functions
+    function openPasswordModal() {
+      if (!userInfo.user_id) {
+        alert("Lütfen önce giriş yapın.");
+        return;
+      }
+      document.getElementById('passwordModal').style.display = 'block';
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').style.display = 'none';
+      document.getElementById('passMsg').textContent = '';
+      document.getElementById('currentPass').value = '';
+      document.getElementById('newPass').value = '';
+      document.getElementById('confirmPass').value = '';
+    }
+
+    async function changePassword() {
+      const currentPass = document.getElementById('currentPass').value;
+      const newPass = document.getElementById('newPass').value;
+      const confirmPass = document.getElementById('confirmPass').value;
+      const msg = document.getElementById('passMsg');
+
+      if (!currentPass || !newPass || !confirmPass) {
+        msg.style.color = 'red';
+        msg.textContent = 'Lütfen tüm alanları doldurun.';
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        msg.style.color = 'red';
+        msg.textContent = 'Yeni şifreler eşleşmiyor.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/users/${userInfo.user_id}/password`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            current_password: currentPass,
+            new_password: newPass
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          msg.style.color = 'green';
+          msg.textContent = data.message;
+          setTimeout(closePasswordModal, 2000);
+        } else {
+          msg.style.color = 'red';
+          msg.textContent = data.detail || 'Şifre güncellenemedi';
+        }
+      } catch (error) {
+        msg.style.color = 'red';
+        msg.textContent = 'Bağlantı hatası';
+      }
+    }
+  </script>
 
 </body>
 

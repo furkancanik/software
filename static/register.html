@@ -116,51 +116,51 @@
     <form id="registerForm">
 
       <label>Ad</label>
-      <input type="text" name="first_name" id="first_name" required>
+      <input type="text" id="first_name" name="first_name" required>
 
       <label>Soyad</label>
-      <input type="text" name="last_name" id="last_name" required>
+      <input type="text" id="last_name" name="last_name" required>
 
       <label>Email</label>
-      <input type="email" name="email" id="email" required>
+      <input type="email" id="email" name="email" required>
 
       <label>Telefon</label>
-      <input type="tel" name="phone" id="phone" required>
+      <input type="tel" id="phone" name="phone" required>
 
       <label>Şifre</label>
-      <input type="password" name="password" id="password" required>
+      <input type="password" id="password" name="password" required>
 
       <label>Şifre Tekrar</label>
-      <input type="password" name="confirm_password" id="confirm_password">
+      <input type="password" id="confirm_password" name="confirm_password" required>
 
       <button type="submit">Kayıt Ol</button>
       <div class="footer-text">
-        Zaten hesabın var mı? <a href="/static/login.html">Giriş Yap</a>
+        Zaten hesabın var mı? <a href="login.html">Giriş Yap</a>
       </div>
 
-      <div id="message" class="error" style="color: green; margin-top: 10px;"></div>
-      <div id="error" class="error"></div>
+      <!-- Backend hata dönerse -->
+      <div class="error" id="errorMsg" style="display: none;"></div>
     </form>
   </div>
 
   <script>
-    document.getElementById('registerForm').addEventListener('submit', async function (event) {
-      event.preventDefault();
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
 
-      const firstName = document.getElementById('first_name').value;
-      const lastName = document.getElementById('last_name').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm_password').value;
-      const messageDiv = document.getElementById('message');
-      const errorDiv = document.getElementById('error');
+      const firstName = document.getElementById('first_name').value.trim();
+      const lastName = document.getElementById('last_name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirm_password').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
 
-      messageDiv.textContent = '';
-      errorDiv.textContent = '';
+      errorMsg.style.display = 'none';
 
+      // Şifre kontrolü
       if (password !== confirmPassword) {
-        errorDiv.textContent = 'Şifreler uyuşmuyor!';
+        errorMsg.textContent = 'Şifreler eşleşmiyor!';
+        errorMsg.style.display = 'block';
         return;
       }
 
@@ -171,30 +171,48 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            email: email,
-            password: password,
             first_name: firstName,
             last_name: lastName,
-            phone: phone
+            email: email,
+            phone: phone,
+            password: password
           })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          messageDiv.textContent = 'Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...';
-          setTimeout(() => {
-            window.location.href = '/static/login.html';
-          }, 2000);
+          // Kayıt başarılı, otomatik login yap
+          const loginResponse = await fetch('/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: email,
+              password: password
+            })
+          });
+
+          const loginData = await loginResponse.json();
+
+          if (loginResponse.ok) {
+            localStorage.setItem('userInfo', JSON.stringify(loginData));
+            window.location.href = 'hasta_dashboard.html';
+          } else {
+            // Kayıt başarılı ama login olmadı, login sayfasına yönlendir
+            window.location.href = 'login.html';
+          }
         } else {
-          errorDiv.textContent = data.detail || 'Kayıt başarısız.';
+          errorMsg.textContent = data.detail || 'Kayıt başarısız';
+          errorMsg.style.display = 'block';
         }
       } catch (error) {
-        errorDiv.textContent = 'Bir hata oluştu: ' + error.message;
+        errorMsg.textContent = 'Bağlantı hatası: ' + error.message;
+        errorMsg.style.display = 'block';
       }
     });
   </script>
-  </div>
 
 </body>
 

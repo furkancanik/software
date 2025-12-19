@@ -28,7 +28,7 @@
         <button type="submit" class="btn">Giriş Yap</button>
       </form>
 
-      <a class="back" href="/static/ana_sayfa.html">← Ana Sayfaya Dön</a>
+      <a class="back" href="/">← Ana Sayfaya Dön</a>
     </div>
 
     <footer class="footer">© 2025 Clinic Appointment Management System</footer>
@@ -52,32 +52,42 @@
       }
 
       try {
-        const response = await fetch('/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, password: pass })
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: email,
+            password: pass
+          })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          // Check role if you want, or just let them in. 
-          // Assuming role_name for admin is 'admin' or similar. 
-          // For now, we trust the successful login and redirect.
-          localStorage.setItem('user_info', JSON.stringify(data));
+          // Admin kontrolü
+          if (data.role_name === "admin") {
+            msg.classList.add("success");
+            msg.textContent = "Giriş başarılı.";
 
-          msg.classList.add("success");
-          msg.textContent = "Giriş başarılı.";
-          setTimeout(() => {
-            window.location.href = "/static/admin.html";
-          }, 600);
+            // Kullanıcı bilgilerini localStorage'a kaydet
+            localStorage.setItem("userInfo", JSON.stringify(data));
+
+            setTimeout(() => {
+              window.location.href = "admin.html";
+            }, 600);
+          } else {
+            msg.classList.add("error");
+            msg.textContent = "Bu sayfa sadece admin kullanıcılar içindir.";
+          }
         } else {
           msg.classList.add("error");
-          msg.textContent = data.detail || "Giriş başarısız.";
+          msg.textContent = data.detail || "Email veya şifre hatalı.";
         }
-      } catch (err) {
+      } catch (error) {
         msg.classList.add("error");
-        msg.textContent = "Bağlantı hatası: " + err.message;
+        msg.textContent = "Bağlantı hatası: " + error.message;
       }
     });
   </script>

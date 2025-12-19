@@ -13,7 +13,7 @@
 
     <header class="header">
         <h1>Availability Settings</h1>
-        <a href="/static/doctor_dashboard.html" class="back-btn">← Back to Dashboard</a>
+        <a href="doctor_dashboard.html" class="back-btn">← Back to Dashboard</a>
     </header>
 
     <section class="container">
@@ -25,28 +25,17 @@
         <div class="card">
             <h2>Working Days</h2>
             <div class="days">
-                <label><input type="checkbox"> Monday</label>
-                <label><input type="checkbox"> Tuesday</label>
-                <label><input type="checkbox"> Wednesday</label>
-                <label><input type="checkbox"> Thursday</label>
-                <label><input type="checkbox"> Friday</label>
+                <label><input type="checkbox" value="Mon"> Monday</label>
+                <label><input type="checkbox" value="Tue"> Tuesday</label>
+                <label><input type="checkbox" value="Wed"> Wednesday</label>
+                <label><input type="checkbox" value="Thu"> Thursday</label>
+                <label><input type="checkbox" value="Fri"> Friday</label>
+                <label><input type="checkbox" value="Sat"> Saturday</label>
+                <label><input type="checkbox" value="Sun"> Sunday</label>
             </div>
         </div>
 
-        <!-- HOURS -->
-        <div class="card">
-            <h2>Working Hours</h2>
-            <div class="hours">
-                <div>
-                    <label>Start Time</label>
-                    <input type="time">
-                </div>
-                <div>
-                    <label>End Time</label>
-                    <input type="time">
-                </div>
-            </div>
-        </div>
+
 
         <!-- SAVE -->
         <button class="save-btn" onclick="saveAvailability()">
@@ -61,10 +50,101 @@
     </footer>
 
     <script>
-        function saveAvailability() {
+        // Kullanıcı bilgilerini al
+        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+
+        if (!userInfo.user_id) {
+            alert('Lütfen önce giriş yapın!');
+            window.location.href = 'doctor_login.html';
+        }
+
+        let doctorId = userInfo.doctor_id;
+
+        // Sayfa yüklendiğinde çalışma saatlerini getir
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!doctorId) {
+                // Eğer doctor_id yoksa, user_id'den al
+                try {
+                    const response = await fetch(`/users/${userInfo.user_id}/doctor-id`);
+                    const data = await response.json();
+                    doctorId = data.doctor_id;
+                    userInfo.doctor_id = doctorId;
+                    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                } catch (error) {
+                    console.error('Doktor ID alınamadı:', error);
+                    return;
+                }
+            }
+
+            await loadWorkingHours();
+        });
+
+        async function loadWorkingHours() {
+            try {
+                const response = await fetch(`/doctors/${doctorId}/working-hours`);
+                const workingHours = await response.json();
+
+                // Gün checkbox'larını işaretle
+                workingHours.forEach(wh => {
+                    const checkbox = document.querySelector(`input[type="checkbox"][value="${wh.day_of_week}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+
+            } catch (error) {
+                console.error('Çalışma saatleri yüklenemedi:', error);
+            }
+        }
+
+        async function saveAvailability() {
             const msg = document.getElementById("msg");
-            msg.style.color = "#16a34a";
-            msg.textContent = "Availability settings saved successfully.";
+            msg.textContent = "";
+
+            // Seçili günleri al
+            const selectedDays = [];
+            const checkboxes = document.querySelectorAll('.days input[type="checkbox"]:checked');
+
+            checkboxes.forEach(cb => {
+                if (cb.value) {
+                    selectedDays.push(cb.value);
+                }
+            });
+
+            // Sabit varsayılan saatler (09:00 - 17:00)
+            const startTime = "09:00";
+            const endTime = "17:00";
+
+            // Çalışma saatlerini oluştur
+            const workingHours = selectedDays.map(day => ({
+                doctor_id: doctorId,
+                day_of_week: day,
+                start_time: startTime + ':00',
+                end_time: endTime + ':00'
+            }));
+
+            try {
+                const response = await fetch(`/doctors/${doctorId}/working-hours`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(workingHours)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.style.color = "#16a34a";
+                    msg.textContent = data.message || "Müsaitlik kaydedildi.";
+                } else {
+                    msg.style.color = "#ef4444";
+                    msg.textContent = data.detail || "Kaydedilemedi.";
+                }
+            } catch (error) {
+                msg.style.color = "#ef4444";
+                msg.textContent = "Bağlantı hatası: " + error.message;
+            }
         }
     </script>
 
