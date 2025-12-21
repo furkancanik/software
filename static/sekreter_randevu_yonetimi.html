@@ -3,49 +3,47 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Sekreter - Randevu Yönetimi</title>
+  <title>Secretary - Appointment Management</title>
   <link rel="stylesheet" href="sekreter_randevu_yonetimi.css">
 </head>
 
 <body>
 
   <div class="box">
-    <h2>Randevu Yönetimi</h2>
-    <p class="subtitle">Randevuları görüntüleyin ve yönetin</p>
+    <h2>Appointment Management</h2>
+    <p class="subtitle">View and manage appointments</p>
     <button class="new-appointment-btn">
-      ➕ Yeni Randevu Oluştur
+      ➕ Create New Appointment
     </button>
-
-
 
     <div class="modal" id="appointmentModal">
       <div class="modal-content">
 
-        <h3>Yeni Randevu Oluştur</h3>
+        <h3>Create New Appointment</h3>
 
-        <label>Hasta</label>
+        <label>Patient</label>
         <select id="patient">
-          <option value="">Hasta seçiniz</option>
+          <option value="">Select patient</option>
         </select>
 
-        <!-- ALAN / BÖLÜM -->
-        <label>Alan</label>
+        <!-- DEPARTMENT -->
+        <label>Department</label>
         <div class="field">
           <select id="department">
-            <option value="">Alan seçiniz</option>
-            <option value="kardiyoloji">Kardiyoloji</option>
-            <option value="dahiliye">Dahiliye</option>
-            <option value="ortopedi">Ortopedi</option>
-            <option value="goz">Göz Hastalıkları</option>
-            <option value="noroloji">Nöroloji</option>
-            <option value="cildiye">Cildiye</option>
-            <option value="kulak">Kulak Burun Boğaz</option>
-            <option value="psikiyatri">Psikiyatri</option>
+            <option value="">Select department</option>
+            <option value="kardiyoloji">Cardiology</option>
+            <option value="dahiliye">Internal Medicine</option>
+            <option value="ortopedi">Orthopedics</option>
+            <option value="goz">Ophthalmology</option>
+            <option value="noroloji">Neurology</option>
+            <option value="cildiye">Dermatology</option>
+            <option value="kulak">Ear, Nose and Throat</option>
+            <option value="psikiyatri">Psychiatry</option>
           </select>
         </div>
 
-        <!-- DOKTOR -->
-        <label>Doktor</label>
+        <!-- DOCTOR -->
+        <label>Doctor</label>
         <div class="field">
           <span class="icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -55,12 +53,12 @@
           </span>
 
           <select id="doctor" disabled>
-            <option>Önce alan seçiniz</option>
+            <option>Please select a department first</option>
           </select>
         </div>
 
-        <!-- TARİH -->
-        <label>Tarih</label>
+        <!-- DATE -->
+        <label>Date</label>
         <div class="field">
           <span class="icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -75,8 +73,8 @@
           <input type="date" id="date" required>
         </div>
 
-        <!-- SAAT -->
-        <label>Saat</label>
+        <!-- TIME -->
+        <label>Time</label>
         <div class="field">
           <span class="icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -86,45 +84,20 @@
           </span>
 
           <select id="time" required>
-            <option value="">Saat seçiniz</option>
+            <option value="">Select time</option>
           </select>
         </div>
 
-
         <div class="modal-actions">
-          <button class="cancel" onclick="closeModal()">İptal</button>
-          <button class="save" onclick="saveAppointment()">Kaydet</button>
+          <button class="cancel" onclick="closeModal()">Cancel</button>
+          <button class="save" onclick="saveAppointment()">Save</button>
         </div>
 
       </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div class="back">
-      <a href="sekreter_dashboard.html">← Sekreter Paneline Dön</a>
+      <a href="sekreter_dashboard.html">← Back to Secretary Dashboard</a>
     </div>
   </div>
 
@@ -137,7 +110,7 @@
 
     // 2. DOM ELEMENTS
     const modal = document.getElementById("appointmentModal");
-    const container = document.querySelector('.box'); // Randevu listesi container'ı
+    const container = document.querySelector('.box');
 
     // Modal Inputs
     const patientSelect = document.getElementById("patient");
@@ -151,9 +124,7 @@
 
     // 3. INIT
     window.addEventListener('DOMContentLoaded', async () => {
-      // Eski statik kartları temizle (eğer varsa)
       document.querySelectorAll('.appointment-card').forEach(e => e.remove());
-
       await loadAppointments();
       await loadPatients();
       await loadDoctorsData();
@@ -165,10 +136,7 @@
         const res = await fetch('/all-appointments');
         const appointments = await res.json();
 
-        // Mevcut kartları temizle (yenileme durumunda)
         container.querySelectorAll('.appointment-card').forEach(e => e.remove());
-
-        // Back link'ten önce ekleyelim
         const backLink = document.querySelector('.back');
 
         appointments.forEach(appt => {
@@ -176,22 +144,22 @@
           card.className = 'appointment-card';
 
           let statusClass = 'pending';
-          let statusText = 'Beklemede';
+          let statusText = 'Pending';
 
-          if (appt.status === 'scheduled') { statusClass = 'approved'; statusText = 'Onaylandı'; }
-          else if (appt.status === 'cancelled') { statusClass = 'canceled'; statusText = 'İptal Edildi'; }
-          else if (appt.status === 'completed') { statusClass = 'approved'; statusText = 'Tamamlandı'; }
+          if (appt.status === 'scheduled') { statusClass = 'approved'; statusText = 'Approved'; }
+          else if (appt.status === 'cancelled') { statusClass = 'canceled'; statusText = 'Cancelled'; }
+          else if (appt.status === 'completed') { statusClass = 'approved'; statusText = 'Completed'; }
 
           card.innerHTML = `
-                    <div class="info">
-                        <p><strong>Hasta:</strong> ${appt.patient_name}</p>
-                        <p><strong>Bölüm:</strong> ${appt.expertise}</p>
-                        <p><strong>Doktor:</strong> ${appt.doctor_name}</p>
-                        <p><strong>Tarih:</strong> ${new Date(appt.appointment_date).toLocaleDateString('tr-TR')}</p>
-                        <p><strong>Saat:</strong> ${appt.start_time.substring(0, 5)}</p>
-                        <p class="status ${statusClass}">Durum: ${statusText}</p>
-                    </div>
-                `;
+            <div class="info">
+              <p><strong>Patient:</strong> ${appt.patient_name}</p>
+              <p><strong>Department:</strong> ${appt.expertise}</p>
+              <p><strong>Doctor:</strong> ${appt.doctor_name}</p>
+              <p><strong>Date:</strong> ${new Date(appt.appointment_date).toLocaleDateString('tr-TR')}</p>
+              <p><strong>Time:</strong> ${appt.start_time.substring(0, 5)}</p>
+              <p class="status ${statusClass}">Status: ${statusText}</p>
+            </div>
+          `;
 
           const actionsDiv = document.createElement('div');
           actionsDiv.className = 'actions';
@@ -199,21 +167,17 @@
           if (appt.status === 'scheduled') {
             const cancelBtn = document.createElement('button');
             cancelBtn.className = 'cancel';
-            cancelBtn.textContent = 'İptal Et';
+            cancelBtn.textContent = 'Cancel';
             cancelBtn.onclick = () => cancelAppt(appt.appointment_id);
             actionsDiv.appendChild(cancelBtn);
-          } else if (appt.status === 'cancelled') {
-            // İptal edilmişse buton gösterme
           }
 
           card.appendChild(actionsDiv);
-
-          // Back link'ten önce ekle
           container.insertBefore(card, backLink);
         });
 
       } catch (err) {
-        console.error("Randevular yüklenemedi:", err);
+        console.error("Appointments could not be loaded:", err);
       }
     }
 
@@ -224,10 +188,9 @@
         const users = await res.json();
         allPatients = users.filter(u => u.role === 'patient');
 
-        patientSelect.innerHTML = '<option value="">Hasta seçiniz</option>';
+        patientSelect.innerHTML = '<option value="">Select patient</option>';
         allPatients.forEach(p => {
           const opt = document.createElement('option');
-          // Value olarak patient_id veriyoruz
           opt.value = p.patient_id;
           opt.textContent = `${p.name} (${p.email})`;
           patientSelect.appendChild(opt);
@@ -244,12 +207,10 @@
     }
 
     // 7. EVENTS
-
-    // Bölüm değişince doktorları filtrele
     departmentSelect.addEventListener('change', function () {
-      const dept = this.value; // value'lar küçük harf "kardiyoloji"
-      doctorSelect.innerHTML = '<option value="">Doktor seçiniz</option>';
-      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>'; // Temizle
+      const dept = this.value;
+      doctorSelect.innerHTML = '<option value="">Select doctor</option>';
+      timeSelect.innerHTML = '<option value="">Select time</option>';
       doctorSelect.disabled = true;
 
       if (!dept) return;
@@ -266,14 +227,13 @@
         });
       } else {
         const opt = document.createElement('option');
-        opt.textContent = "Bu bölümde doktor bulunamadı";
+        opt.textContent = "No doctor found in this department";
         doctorSelect.appendChild(opt);
       }
     });
 
-    // Tarih veya Doktor değişince saatleri çek
     async function updateSlots() {
-      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+      timeSelect.innerHTML = '<option value="">Select time</option>';
       const doctorId = doctorSelect.value;
       const dateVal = dateInput.value;
 
@@ -285,7 +245,7 @@
 
         if (slots.length === 0) {
           const opt = document.createElement('option');
-          opt.textContent = "Uygun saat yok";
+          opt.textContent = "No available time";
           timeSelect.appendChild(opt);
           return;
         }
@@ -302,24 +262,20 @@
     doctorSelect.addEventListener('change', updateSlots);
     dateInput.addEventListener('change', updateSlots);
 
-    // Modal Açma Buttonu
     document.querySelector(".new-appointment-btn").addEventListener("click", () => {
       modal.style.display = "flex";
     });
 
-    // Global Kapatma (HTML onclick="closeModal()" için)
     window.closeModal = function () {
       modal.style.display = "none";
-      // Reset inputs
       patientSelect.value = "";
       departmentSelect.value = "";
-      doctorSelect.innerHTML = '<option>Önce alan seçiniz</option>';
+      doctorSelect.innerHTML = '<option>Please select a department first</option>';
       doctorSelect.disabled = true;
       dateInput.value = "";
-      timeSelect.innerHTML = '<option value="">Saat seçiniz</option>';
+      timeSelect.innerHTML = '<option value="">Select time</option>';
     }
 
-    // Kaydet/Oluştur
     window.saveAppointment = async function () {
       const patientId = patientSelect.value;
       const doctorId = doctorSelect.value;
@@ -327,7 +283,7 @@
       const dateVal = dateInput.value;
 
       if (!patientId || !doctorId || !slotId || !dateVal) {
-        alert("Lütfen tüm alanları doldurunuz.");
+        alert("Please fill in all fields.");
         return;
       }
 
@@ -345,28 +301,27 @@
 
         const result = await res.json();
         if (res.ok) {
-          alert("Randevu oluşturuldu!");
+          alert("Appointment created!");
           closeModal();
-          loadAppointments(); // Listeyi yenile
+          loadAppointments();
         } else {
-          alert("Hata: " + (result.detail || "Oluşturulamadı"));
+          alert("Error: " + (result.detail || "Could not be created"));
         }
       } catch (err) {
-        alert("Bağlantı hatası: " + err);
+        alert("Connection error: " + err);
       }
     }
 
-    // İptal
     window.cancelAppt = async function (id) {
-      if (!confirm("Randevuyu iptal etmek istediğinize emin misiniz?")) return;
+      if (!confirm("Are you sure you want to cancel the appointment?")) return;
 
       try {
         const res = await fetch(`/appointments/${id}`, { method: 'DELETE' });
         if (res.ok) {
-          alert("Randevu iptal edildi.");
+          alert("Appointment cancelled.");
           await loadAppointments();
         } else {
-          alert("İptal edilemedi.");
+          alert("Could not be cancelled.");
         }
       } catch (err) { alert(err); }
     }

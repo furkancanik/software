@@ -3,9 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Randevu Al</title>
+  <title>Book Appointment</title>
   <link rel="stylesheet" href="randevu.css">
-
 
   <style>
     * {
@@ -113,16 +112,14 @@
 <body>
 
   <div class="box">
-    <h2>Randevu Al</h2>
+    <h2>Book Appointment</h2>
 
     <form id="appointmentForm">
 
-
-      <!-- ALAN -->
-      <label>Alan / Bölüm</label>
+      <!-- DEPARTMENT -->
+      <label>Department</label>
       <div class="field">
         <span class="icon">
-          <!-- BEYİN -->
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 18V5" />
@@ -137,20 +134,20 @@
         </span>
 
         <select id="department">
-          <option value="">Alan seçiniz</option>
-          <option value="kardiyoloji">Kardiyoloji</option>
-          <option value="dahiliye">Dahiliye</option>
-          <option value="ortopedi">Ortopedi</option>
-          <option value="goz">Göz Hastalıkları</option>
-          <option value="noroloji">Nöroloji</option>
-          <option value="cildiye">Cildiye</option>
-          <option value="kulak">Kulak Burun Boğaz</option>
-          <option value="psikiyatri">Psikiyatri</option>
+          <option value="">Select Department</option>
+          <option value="kardiyoloji">Cardiology</option>
+          <option value="dahiliye">Internal Medicine</option>
+          <option value="ortopedi">Orthopedics</option>
+          <option value="goz">Ophthalmology</option>
+          <option value="noroloji">Neurology</option>
+          <option value="cildiye">Dermatology</option>
+          <option value="kulak">Ear, Nose and Throat</option>
+          <option value="psikiyatri">Psychiatry</option>
         </select>
       </div>
 
-      <!-- DOKTOR -->
-      <label>Doktor</label>
+      <!-- DOCTOR -->
+      <label>Doctor</label>
       <div class="field">
         <span class="icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -160,12 +157,12 @@
         </span>
 
         <select id="doctor" disabled>
-          <option>Önce alan seçiniz</option>
+          <option>Please select a department first</option>
         </select>
       </div>
 
-      <!-- TARİH -->
-      <label>Tarih</label>
+      <!-- DATE -->
+      <label>Date</label>
       <div class="field">
         <span class="icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -178,11 +175,10 @@
         </span>
 
         <input type="date" id="date" required>
-
       </div>
 
-      <!-- SAAT -->
-      <label>Saat</label>
+      <!-- TIME -->
+      <label>Time</label>
       <div class="field">
         <span class="icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
@@ -192,7 +188,7 @@
         </span>
 
         <select id="time" required>
-          <option value="">Saat seçiniz</option>
+          <option value="">Select Time</option>
           <option>09:00</option>
           <option>09:30</option>
           <option>10:00</option>
@@ -202,40 +198,34 @@
         </select>
       </div>
 
-      <button>Randevu Al</button>
+      <button>Book Appointment</button>
     </form>
 
-
-
     <div class="back">
-      <a href="hasta_dashboard.html">← Hasta Paneline Dön</a>
+      <a href="hasta_dashboard.html">← Back to Patient Dashboard</a>
     </div>
 
-
     <script>
-      // Kullanıcı bilgilerini al
       const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
 
       if (!userInfo.user_id) {
-        alert('Lütfen önce giriş yapın!');
+        alert('Please log in first!');
         window.location.href = 'login.html';
       }
 
       let allDoctors = [];
 
-      // Sayfa yüklendiğinde doktorları getir
       window.addEventListener('DOMContentLoaded', async () => {
         await loadDoctors();
       });
 
-      // Doktorları yükle
       async function loadDoctors() {
         try {
           const response = await fetch('/doctors');
           allDoctors = await response.json();
         } catch (error) {
-          console.error('Doktorlar yüklenemedi:', error);
-          alert('Doktorlar yüklenirken hata oluştu!');
+          console.error('Doctors could not be loaded:', error);
+          alert('An error occurred while loading doctors!');
         }
       }
 
@@ -244,16 +234,14 @@
       const dateInput = document.getElementById("date");
       const timeSelect = document.getElementById("time");
 
-      // Alan seçildiğinde doktorları filtrele
       department.addEventListener("change", () => {
-        doctorSelect.innerHTML = "<option>Doktor seçiniz</option>";
+        doctorSelect.innerHTML = "<option>Select a doctor</option>";
         doctorSelect.disabled = true;
-        timeSelect.innerHTML = "<option value=''>Saat seçiniz</option>";
+        timeSelect.innerHTML = "<option value=''>Select Time</option>";
 
         const selectedDept = department.value;
 
         if (selectedDept && allDoctors.length > 0) {
-          // Seçilen alana göre doktorları filtrele
           const filteredDoctors = allDoctors.filter(doc =>
             doc.expertise.toLowerCase().includes(selectedDept.toLowerCase()) ||
             selectedDept.toLowerCase().includes(doc.expertise.toLowerCase())
@@ -268,7 +256,6 @@
             });
             doctorSelect.disabled = false;
           } else {
-            // Eğer filtreleme sonucu yoksa tüm doktorları göster
             allDoctors.forEach(doc => {
               const opt = document.createElement("option");
               opt.value = doc.doctor_id;
@@ -280,7 +267,6 @@
         }
       });
 
-      // Doktor ve tarih seçildiğinde müsait saatleri getir
       async function loadAvailableSlots() {
         const doctorId = doctorSelect.value;
         const date = dateInput.value;
@@ -293,10 +279,10 @@
           const response = await fetch(`/available-slots/?doctor_id=${doctorId}&date=${date}`);
           const slots = await response.json();
 
-          timeSelect.innerHTML = "<option value=''>Saat seçiniz</option>";
+          timeSelect.innerHTML = "<option value=''>Select Time</option>";
 
           if (slots.length === 0) {
-            timeSelect.innerHTML = "<option value=''>Bu tarihte müsait saat yok</option>";
+            timeSelect.innerHTML = "<option value=''>No available time on this date</option>";
             return;
           }
 
@@ -307,15 +293,14 @@
             timeSelect.appendChild(opt);
           });
         } catch (error) {
-          console.error('Müsait saatler yüklenemedi:', error);
-          timeSelect.innerHTML = "<option value=''>Hata oluştu</option>";
+          console.error('Available slots could not be loaded:', error);
+          timeSelect.innerHTML = "<option value=''>An error occurred</option>";
         }
       }
 
       doctorSelect.addEventListener("change", loadAvailableSlots);
       dateInput.addEventListener("change", loadAvailableSlots);
 
-      // Form gönderildiğinde
       document.getElementById("appointmentForm").addEventListener("submit", async function (e) {
         e.preventDefault();
 
@@ -328,7 +313,7 @@
         const timeText = timeSelect.options[timeSelect.selectedIndex].text;
 
         if (!departmentText || !doctorId || !date || !slotId) {
-          alert("Lütfen tüm alanları doldurunuz.");
+          alert("Please fill in all fields.");
           return;
         }
 
@@ -339,7 +324,7 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              patient_id: userInfo.user_id, // Login'den gelen patient_id
+              patient_id: userInfo.user_id,
               doctor_id: parseInt(doctorId),
               slot_id: parseInt(slotId),
               appointment_date: date
@@ -349,19 +334,17 @@
           const data = await response.json();
 
           if (response.ok) {
-            // Modal içini doldur
             document.getElementById("m-department").innerText = departmentText;
             document.getElementById("m-doctor").innerText = doctorText;
             document.getElementById("m-date").innerText = date;
             document.getElementById("m-time").innerText = timeText;
 
-            // Modal aç
             document.getElementById("successModal").style.display = "flex";
           } else {
-            alert('Randevu oluşturulamadı: ' + (data.detail || 'Bilinmeyen hata'));
+            alert('Appointment could not be created: ' + (data.detail || 'Unknown error'));
           }
         } catch (error) {
-          alert('Bağlantı hatası: ' + error.message);
+          alert('Connection error: ' + error.message);
         }
       });
 
@@ -371,20 +354,16 @@
       }
     </script>
 
-
-
-
-
     <div class="modal" id="successModal">
       <div class="modal-content">
-        <h3>✅ Randevunuz Oluşturuldu</h3>
+        <h3>✅ Your Appointment Has Been Created</h3>
 
-        <p><strong>Alan:</strong> <span id="m-department"></span></p>
-        <p><strong>Doktor:</strong> <span id="m-doctor"></span></p>
-        <p><strong>Tarih:</strong> <span id="m-date"></span></p>
-        <p><strong>Saat:</strong> <span id="m-time"></span></p>
+        <p><strong>Department:</strong> <span id="m-department"></span></p>
+        <p><strong>Doctor:</strong> <span id="m-doctor"></span></p>
+        <p><strong>Date:</strong> <span id="m-date"></span></p>
+        <p><strong>Time:</strong> <span id="m-time"></span></p>
 
-        <button onclick="closeModal()">Tamam</button>
+        <button onclick="closeModal()">OK</button>
       </div>
     </div>
 

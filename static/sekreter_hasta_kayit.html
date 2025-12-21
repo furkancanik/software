@@ -3,46 +3,45 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Sekreter - Hasta Kaydı</title>
+  <title>Secretary - Patient Registration</title>
   <link rel="stylesheet" href="sekreter_hasta_kayit.css">
 </head>
 
 <body>
 
   <div class="box">
-    <h2>Yeni Hasta Kaydı</h2>
-    <p class="subtitle">Hasta bilgilerini giriniz</p>
+    <h2>New Patient Registration</h2>
+    <p class="subtitle">Please enter patient information</p>
 
     <form id="patientForm">
 
-      <label>Ad</label>
-      <input type="text" required placeholder="Hasta adı">
+      <label>First Name</label>
+      <input type="text" required placeholder="Patient first name">
 
-      <label>Soyad</label>
-      <input type="text" required placeholder="Hasta soyadı">
+      <label>Last Name</label>
+      <input type="text" required placeholder="Patient last name">
 
       <label>Email</label>
-      <input type="email" required placeholder="ornek@mail.com">
+      <input type="email" required placeholder="example@mail.com">
 
-      <label>Telefon</label>
+      <label>Phone</label>
       <input type="tel" required placeholder="05xx xxx xx xx">
 
-
-      <button type="submit">Hasta Kaydet</button>
+      <button type="submit">Save Patient</button>
     </form>
 
     <div class="back">
-      <a href="sekreter_dashboard.html">← Sekreter Paneline Dön</a>
+      <a href="sekreter_dashboard.html">← Back to Secretary Dashboard</a>
     </div>
   </div>
 
-  <!-- BAŞARI POPUP -->
+  <!-- SUCCESS POPUP -->
   <div class="modal" id="successModal">
     <div class="modal-content">
-      <h3>✅ Kayıt Başarılı</h3>
-      <p>Hasta sisteme başarıyla eklendi.</p>
-      <p>Kullanıcı şifresi, telefon numarasına iletildi.</p>
-      <button onclick="closeModal()">Tamam</button>
+      <h3>✅ Registration Successful</h3>
+      <p>The patient has been successfully added to the system.</p>
+      <p>The user password has been sent to the phone number.</p>
+      <button onclick="closeModal()">OK</button>
     </div>
   </div>
 
@@ -65,7 +64,7 @@
       const email = inputs[2].value.trim();
       const phone = inputs[3].value.trim();
 
-      // Varsayılan şifre
+      // Default password
       const password = "123";
 
       try {
@@ -86,10 +85,10 @@
           form.reset();
         } else {
           const err = await response.json();
-          alert("Kayıt başarısız: " + (err.detail || "Hata oluştu"));
+          alert("Registration failed: " + (err.detail || "An error occurred"));
         }
       } catch (error) {
-        alert("Bağlantı hatası: " + error);
+        alert("Connection error: " + error);
       }
     });
 

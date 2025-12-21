@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Sekreter - Doktor Listesi</title>
+    <title>Secretary - Doctor List</title>
     <style>
         /* Temel Stil */
         body {
@@ -121,15 +121,15 @@
 <body>
 
     <div class="container">
-        <h2>Doktor Listesi</h2>
-        <p class="subtitle">Klinikteki aktif doktorlar ve uzmanlık alanları</p>
+        <h2>Doctor List</h2>
+        <p class="subtitle">Active doctors in the clinic and their specialties</p>
 
         <div class="doctor-grid" id="doctorGrid">
-            <div class="loading">Yükleniyor...</div>
+            <div class="loading">Loading...</div>
         </div>
 
         <div style="text-align:center;">
-            <a href="sekreter_dashboard.html" class="back-btn">← Sekreter Paneline Dön</a>
+            <a href="sekreter_dashboard.html" class="back-btn">← Back to Secretary Dashboard</a>
         </div>
     </div>
 
@@ -146,14 +146,14 @@
 
             try {
                 const response = await fetch('/doctors');
-                if (!response.ok) throw new Error("Veri çekilemedi");
+                if (!response.ok) throw new Error("Data could not be fetched");
 
                 const doctors = await response.json();
 
-                grid.innerHTML = ""; // Loading yazısını kaldır
+                grid.innerHTML = "";
 
                 if (doctors.length === 0) {
-                    grid.innerHTML = '<p class="loading">Sistemde kayıtlı doktor bulunamadı.</p>';
+                    grid.innerHTML = '<p class="loading">No doctors found in the system.</p>';
                     return;
                 }
 
@@ -173,7 +173,7 @@
 
             } catch (error) {
                 console.error(error);
-                grid.innerHTML = '<p class="loading" style="color:red;">Doktor listesi yüklenirken hata oluştu.</p>';
+                grid.innerHTML = '<p class="loading" style="color:red;">An error occurred while loading the doctor list.</p>';
             }
         });
     </script>

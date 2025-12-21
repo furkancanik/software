@@ -92,7 +92,7 @@
         const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
 
         if (!userInfo.user_id) {
-            alert('Lütfen önce giriş yapın!');
+            alert('Please log in first!');
             window.location.href = 'doctor_login.html';
         }
 
@@ -116,7 +116,7 @@
                 userInfo.doctor_id = doctorId;
                 localStorage.setItem('userInfo', JSON.stringify(userInfo));
             } catch (error) {
-                console.error('Doktor ID alınamadı:', error);
+                console.error('Doctor ID could not be retrieved:', error);
             }
         }
 
@@ -135,7 +135,7 @@
                     const noAppt = document.createElement('p');
                     noAppt.style.textAlign = 'center';
                     noAppt.style.color = '#6b7280';
-                    noAppt.textContent = 'Henüz randevunuz bulunmamaktadır.';
+                    noAppt.textContent = 'You do not have any appointments yet.';
                     container.appendChild(noAppt);
                     return;
                 }
@@ -171,7 +171,7 @@
                 });
 
             } catch (error) {
-                console.error('Randevular yüklenemedi:', error);
+                console.error('Appointments could not be loaded:', error);
             }
         }
 

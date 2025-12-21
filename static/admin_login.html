@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Admin Girişi</title>
+  <title>Admin Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="doktor.css"><!-- aynı stil olabilir -->
 </head>
@@ -13,8 +13,8 @@
   <div class="page">
     <div class="login-card">
       <div class="icon">👑</div>
-      <h1>Admin Girişi</h1>
-      <p class="sub">Email ve şifrenizle giriş yapın.</p>
+      <h1>Admin Login</h1>
+      <p class="sub">Log in with your email and password.</p>
 
       <div id="msg" class="msg"></div>
 
@@ -22,13 +22,13 @@
         <label>Email</label>
         <input id="email" type="email" placeholder="admin@clinic.com">
 
-        <label>Şifre</label>
+        <label>Password</label>
         <input id="password" type="password" placeholder="••••••••">
 
-        <button type="submit" class="btn">Giriş Yap</button>
+        <button type="submit" class="btn">Log In</button>
       </form>
 
-      <a class="back" href="/">← Ana Sayfaya Dön</a>
+      <a class="back" href="/">← Back to Home Page</a>
     </div>
 
     <footer class="footer">© 2025 Clinic Appointment Management System</footer>
@@ -47,7 +47,7 @@
 
       if (!email || !pass) {
         msg.classList.add("error");
-        msg.textContent = "Lütfen tüm alanları doldurun.";
+        msg.textContent = "Please fill in all fields.";
         return;
       }
 
@@ -69,7 +69,7 @@
           // Admin kontrolü
           if (data.role_name === "admin") {
             msg.classList.add("success");
-            msg.textContent = "Giriş başarılı.";
+            msg.textContent = "Login successful.";
 
             // Kullanıcı bilgilerini localStorage'a kaydet
             localStorage.setItem("userInfo", JSON.stringify(data));
@@ -79,15 +79,15 @@
             }, 600);
           } else {
             msg.classList.add("error");
-            msg.textContent = "Bu sayfa sadece admin kullanıcılar içindir.";
+            msg.textContent = "This page is for admin users only.";
           }
         } else {
           msg.classList.add("error");
-          msg.textContent = data.detail || "Email veya şifre hatalı.";
+          msg.textContent = data.detail || "Incorrect email or password.";
         }
       } catch (error) {
         msg.classList.add("error");
-        msg.textContent = "Bağlantı hatası: " + error.message;
+        msg.textContent = "Connection error: " + error.message;
       }
     });
   </script>

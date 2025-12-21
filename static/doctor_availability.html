@@ -35,8 +35,6 @@
             </div>
         </div>
 
-
-
         <!-- SAVE -->
         <button class="save-btn" onclick="saveAvailability()">
             Save Availability
@@ -54,7 +52,7 @@
         const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
 
         if (!userInfo.user_id) {
-            alert('Lütfen önce giriş yapın!');
+            alert('Please log in first!');
             window.location.href = 'doctor_login.html';
         }
 
@@ -71,7 +69,7 @@
                     userInfo.doctor_id = doctorId;
                     localStorage.setItem('userInfo', JSON.stringify(userInfo));
                 } catch (error) {
-                    console.error('Doktor ID alınamadı:', error);
+                    console.error('Doctor ID could not be retrieved:', error);
                     return;
                 }
             }
@@ -93,7 +91,7 @@
                 });
 
             } catch (error) {
-                console.error('Çalışma saatleri yüklenemedi:', error);
+                console.error('Working hours could not be loaded:', error);
             }
         }
 
@@ -136,14 +134,14 @@
 
                 if (response.ok) {
                     msg.style.color = "#16a34a";
-                    msg.textContent = data.message || "Müsaitlik kaydedildi.";
+                    msg.textContent = data.message || "Availability saved.";
                 } else {
                     msg.style.color = "#ef4444";
-                    msg.textContent = data.detail || "Kaydedilemedi.";
+                    msg.textContent = data.detail || "Could not be saved.";
                 }
             } catch (error) {
                 msg.style.color = "#ef4444";
-                msg.textContent = "Bağlantı hatası: " + error.message;
+                msg.textContent = "Connection error: " + error.message;
             }
         }
     </script>

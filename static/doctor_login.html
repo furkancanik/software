@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Klinik Randevu Sistemi | Doktor Girişi</title>
+  <title>Clinic Appointment System | Doctor Login</title>
 
   <link rel="stylesheet" href="doktor.css" />
 </head>
@@ -14,25 +14,25 @@
   <div class="page">
     <div class="login-card">
       <div class="icon">🧑‍⚕️</div>
-      <h1>Doktor Girişi</h1>
-      <p class="sub">Email/Username ve şifrenizle giriş yapın.</p>
+      <h1>Doctor Login</h1>
+      <p class="sub">Log in with your email/username and password.</p>
 
-      <!-- Hata / Bilgi mesajları -->
+      <!-- Error / Info messages -->
       <div id="msg" class="msg" aria-live="polite"></div>
 
       <!-- FORM -->
       <form id="loginForm" class="form">
         <label>Email / Username</label>
-        <input id="username" type="text" placeholder="ornek@mail.com" autocomplete="username" />
+        <input id="username" type="text" placeholder="example@mail.com" autocomplete="username" />
 
-        <label>Şifre</label>
+        <label>Password</label>
         <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
 
-        <!-- 🔴 EKSİK OLAN BUYDU -->
-        <button type="submit" class="btn">Giriş Yap</button>
+        <!-- 🔴 THIS WAS THE MISSING PART -->
+        <button type="submit" class="btn">Log In</button>
       </form>
 
-      <a class="back" href="/">← Ana Sayfaya Dön</a>
+      <a class="back" href="/">← Back to Home Page</a>
     </div>
 
     <footer class="footer">© 2025 Clinic Appointment Management System</footer>
@@ -53,7 +53,7 @@
 
       if (!u || !p) {
         msg.classList.add("error");
-        msg.textContent = "Lütfen tüm alanları doldurun.";
+        msg.textContent = "Please fill in all fields.";
         return;
       }
 
@@ -72,12 +72,12 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Doktor kontrolü
+          // Doctor check
           if (data.role_name === 'doctor') {
             msg.classList.add("success");
-            msg.textContent = "Giriş başarılı.";
+            msg.textContent = "Login successful.";
 
-            // Kullanıcı bilgilerini localStorage'a kaydet
+            // Save user info to localStorage
             localStorage.setItem('userInfo', JSON.stringify(data));
 
             setTimeout(() => {
@@ -85,15 +85,15 @@
             }, 600);
           } else {
             msg.classList.add("error");
-            msg.textContent = "Bu sayfa sadece doktor kullanıcılar içindir.";
+            msg.textContent = "This page is for doctor users only.";
           }
         } else {
           msg.classList.add("error");
-          msg.textContent = data.detail || "Kullanıcı adı veya şifre hatalı.";
+          msg.textContent = data.detail || "Incorrect username or password.";
         }
       } catch (error) {
         msg.classList.add("error");
-        msg.textContent = "Bağlantı hatası: " + error.message;
+        msg.textContent = "Connection error: " + error.message;
       }
     });
   </script>

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Sekreter Girişi</title>
+  <title>Secretary Login</title>
   <link rel="stylesheet" href="sekreter.css">
 </head>
 
@@ -12,8 +12,8 @@
   <div class="login-box">
     <div class="icon">👩‍💻</div>
 
-    <h2>Sekreter Girişi</h2>
-    <p class="subtitle">Email ve şifrenizle giriş yapın.</p>
+    <h2>Secretary Login</h2>
+    <p class="subtitle">Log in with your email and password.</p>
 
     <!-- ✅ FORM EKLENDİ -->
     <form id="secretaryLoginForm">
@@ -22,17 +22,17 @@
       <!-- ✅ id eklendi -->
       <input id="email" type="email" placeholder="sekreter@clinic.com" required>
 
-      <label>Şifre</label>
+      <label>Password</label>
       <!-- ✅ id eklendi -->
       <input id="password" type="password" placeholder="123456" required>
 
       <!-- ✅ submit olmalı -->
-      <button type="submit">Giriş Yap</button>
+      <button type="submit">Log In</button>
 
     </form>
 
     <div class="back-link">
-      <a href="ana_sayfa.html">← Ana Sayfaya Dön</a>
+      <a href="ana_sayfa.html">← Back to Home Page</a>
     </div>
   </div>
 
@@ -60,15 +60,15 @@
             localStorage.setItem('userInfo', JSON.stringify(data));
             window.location.href = 'sekreter_dashboard.html';
           } else {
-            alert('Bu alana sadece sekreterler giriş yapabilir.');
+            alert('Only secretaries can log in to this area.');
           }
         } else {
           const result = await response.json();
-          alert(result.detail || "Giriş başarısız!");
+          alert(result.detail || "Login failed!");
         }
       } catch (error) {
         console.error("Login Error:", error);
-        alert("Bağlantı hatası oluştu.");
+        alert("A connection error occurred.");
       }
     });
   </script>

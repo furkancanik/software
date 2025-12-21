@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Kayıt Ol</title>
+  <title>Register</title>
   <style>
     body {
       margin: 0;
@@ -111,34 +111,34 @@
 <body>
 
   <div class="register-box">
-    <h2>Kayıt Ol</h2>
+    <h2>Register</h2>
 
     <form id="registerForm">
 
-      <label>Ad</label>
+      <label>First Name</label>
       <input type="text" id="first_name" name="first_name" required>
 
-      <label>Soyad</label>
+      <label>Last Name</label>
       <input type="text" id="last_name" name="last_name" required>
 
       <label>Email</label>
       <input type="email" id="email" name="email" required>
 
-      <label>Telefon</label>
+      <label>Phone</label>
       <input type="tel" id="phone" name="phone" required>
 
-      <label>Şifre</label>
+      <label>Password</label>
       <input type="password" id="password" name="password" required>
 
-      <label>Şifre Tekrar</label>
+      <label>Confirm Password</label>
       <input type="password" id="confirm_password" name="confirm_password" required>
 
-      <button type="submit">Kayıt Ol</button>
+      <button type="submit">Register</button>
       <div class="footer-text">
-        Zaten hesabın var mı? <a href="login.html">Giriş Yap</a>
+        Already have an account? <a href="login.html">Log In</a>
       </div>
 
-      <!-- Backend hata dönerse -->
+      <!-- Shown if backend returns an error -->
       <div class="error" id="errorMsg" style="display: none;"></div>
     </form>
   </div>
@@ -157,9 +157,9 @@
 
       errorMsg.style.display = 'none';
 
-      // Şifre kontrolü
+      // Password check
       if (password !== confirmPassword) {
-        errorMsg.textContent = 'Şifreler eşleşmiyor!';
+        errorMsg.textContent = 'Passwords do not match!';
         errorMsg.style.display = 'block';
         return;
       }
@@ -182,7 +182,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Kayıt başarılı, otomatik login yap
+          // Registration successful, auto login
           const loginResponse = await fetch('/login', {
             method: 'POST',
             headers: {
@@ -200,15 +200,14 @@
             localStorage.setItem('userInfo', JSON.stringify(loginData));
             window.location.href = 'hasta_dashboard.html';
           } else {
-            // Kayıt başarılı ama login olmadı, login sayfasına yönlendir
             window.location.href = 'login.html';
           }
         } else {
-          errorMsg.textContent = data.detail || 'Kayıt başarısız';
+          errorMsg.textContent = data.detail || 'Registration failed';
           errorMsg.style.display = 'block';
         }
       } catch (error) {
-        errorMsg.textContent = 'Bağlantı hatası: ' + error.message;
+        errorMsg.textContent = 'Connection error: ' + error.message;
         errorMsg.style.display = 'block';
       }
     });

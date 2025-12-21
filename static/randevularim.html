@@ -3,69 +3,67 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Randevularım</title>
+  <title>My Appointments</title>
   <link rel="stylesheet" href="randevularim.css">
 </head>
 
 <body>
 
   <div class="box">
-    <h2>Randevularım</h2>
+    <h2>My Appointments</h2>
     <div id="notification" class="notification">
-      Randevunuz iptal edildi.
+      Your appointment has been cancelled.
     </div>
-
 
     <div id="appointments">
 
       <div class="appointment-card">
         <div class="info">
-          <p><strong>Alan:</strong> Kardiyoloji</p>
-          <p><strong>Doktor:</strong> Dr. Ahmet Yılmaz</p>
-          <p><strong>Tarih:</strong> 20.05.2025</p>
-          <p><strong>Saat:</strong> 10:30</p>
-          <p class="status active">Durum: Aktif</p>
+          <p><strong>Department:</strong> Cardiology</p>
+          <p><strong>Doctor:</strong> Dr. Ahmet Yılmaz</p>
+          <p><strong>Date:</strong> 20.05.2025</p>
+          <p><strong>Time:</strong> 10:30</p>
+          <p class="status active">Status: Active</p>
         </div>
-        <button class="cancel-btn">İptal Et</button>
+        <button class="cancel-btn">Cancel</button>
       </div>
 
       <div class="appointment-card">
         <div class="info">
-          <p><strong>Alan:</strong> Dahiliye</p>
-          <p><strong>Doktor:</strong> Dr. Ayşe Demir</p>
-          <p><strong>Tarih:</strong> 10.04.2025</p>
-          <p><strong>Saat:</strong> 14:00</p>
-          <p class="status past">Durum: Geçmiş</p>
+          <p><strong>Department:</strong> Internal Medicine</p>
+          <p><strong>Doctor:</strong> Dr. Ayşe Demir</p>
+          <p><strong>Date:</strong> 10.04.2025</p>
+          <p><strong>Time:</strong> 14:00</p>
+          <p class="status past">Status: Past</p>
         </div>
-        <button class="cancel-btn">İptal Et</button>
+        <button class="cancel-btn">Cancel</button>
       </div>
 
     </div>
 
     <div class="back">
-      <a href="hasta_dashboard.html">← Hasta Paneline Dön</a>
+      <a href="hasta_dashboard.html">← Back to Patient Dashboard</a>
     </div>
   </div>
 
   <div id="cancelModal" class="modal">
     <div class="modal-content">
-      <h3>Randevuyu iptal etmek istiyor musunuz?</h3>
-      <p>Bu işlem geri alınamaz.</p>
+      <h3>Do you want to cancel the appointment?</h3>
+      <p>This action cannot be undone.</p>
 
       <div class="modal-buttons">
-        <button class="btn-cancel" onclick="closeCancelModal()">Vazgeç</button>
-        <button class="btn-danger" onclick="confirmCancel()">Evet, İptal Et</button>
+        <button class="btn-cancel" onclick="closeCancelModal()">Dismiss</button>
+        <button class="btn-danger" onclick="confirmCancel()">Yes, Cancel</button>
       </div>
     </div>
   </div>
-
 
   <script>
     // Kullanıcı bilgilerini al
     const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
 
     if (!userInfo.user_id) {
-      alert('Lütfen önce giriş yapın!');
+      alert('Please log in first!');
       window.location.href = 'login.html';
     }
 
@@ -86,7 +84,7 @@
         container.innerHTML = '';
 
         if (appointments.length === 0) {
-          container.innerHTML = '<p style="text-align: center; color: #6b7280;">Henüz randevunuz bulunmamaktadır.</p>';
+          container.innerHTML = '<p style="text-align: center; color: #6b7280;">You do not have any appointments yet.</p>';
           return;
         }
 
@@ -94,31 +92,28 @@
           const card = document.createElement('div');
           card.className = 'appointment-card';
 
-          // Tarih formatla
           const date = new Date(appt.appointment_date);
           const formattedDate = date.toLocaleDateString('tr-TR');
 
-          // Status kontrolü
           const isPast = new Date(appt.appointment_date) < new Date();
           const isCancelled = appt.status === 'cancelled';
           const statusClass = isCancelled ? 'cancelled' : (isPast ? 'past' : 'active');
-          const statusText = isCancelled ? 'İptal Edildi' : (isPast ? 'Geçmiş' : 'Aktif');
+          const statusText = isCancelled ? 'Cancelled' : (isPast ? 'Past' : 'Active');
 
           card.innerHTML = `
           <div class="info">
-            <p><strong>Alan:</strong> ${appt.expertise}</p>
-            <p><strong>Doktor:</strong> ${appt.doctor_name}</p>
-            <p><strong>Tarih:</strong> ${formattedDate}</p>
-            <p><strong>Saat:</strong> ${appt.start_time.substring(0, 5)}</p>
-            <p class="status ${statusClass}">Durum: ${statusText}</p>
+            <p><strong>Department:</strong> ${appt.expertise}</p>
+            <p><strong>Doctor:</strong> ${appt.doctor_name}</p>
+            <p><strong>Date:</strong> ${formattedDate}</p>
+            <p><strong>Time:</strong> ${appt.start_time.substring(0, 5)}</p>
+            <p class="status ${statusClass}">Status: ${statusText}</p>
           </div>
-          ${!isCancelled && !isPast ? `<button class="cancel-btn" data-id="${appt.appointment_id}">İptal Et</button>` : ''}
+          ${!isCancelled && !isPast ? `<button class="cancel-btn" data-id="${appt.appointment_id}">Cancel</button>` : ''}
         `;
 
           container.appendChild(card);
         });
 
-        // İptal butonlarına event listener ekle
         document.querySelectorAll('.cancel-btn').forEach(btn => {
           btn.addEventListener('click', function () {
             selectedAppointmentId = this.getAttribute('data-id');
@@ -128,9 +123,9 @@
         });
 
       } catch (error) {
-        console.error('Randevular yüklenemedi:', error);
+        console.error('Appointments could not be loaded:', error);
         document.getElementById('appointments').innerHTML =
-          '<p style="text-align: center; color: #ef4444;">Randevular yüklenirken hata oluştu!</p>';
+          '<p style="text-align: center; color: #ef4444;">An error occurred while loading appointments!</p>';
       }
     }
 
@@ -154,14 +149,12 @@
           }
           closeCancelModal();
           showNotification();
-
-          // Listeyi yenile
           await loadAppointments();
         } else {
-          alert('Randevu iptal edilemedi: ' + (data.detail || 'Bilinmeyen hata'));
+          alert('Appointment could not be cancelled: ' + (data.detail || 'Unknown error'));
         }
       } catch (error) {
-        alert('Bağlantı hatası: ' + error.message);
+        alert('Connection error: ' + error.message);
       }
     }
 
@@ -174,10 +167,6 @@
       }, 2500);
     }
   </script>
-
-
-
-
 
 </body>
 

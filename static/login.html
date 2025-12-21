@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Giriş Yap</title>
+  <title>Log In</title>
   <style>
     body {
       margin: 0;
@@ -110,27 +110,27 @@
 <body>
 
   <div class="login-box">
-    <h2>Hasta Girişi</h2>
+    <h2>Patient Login</h2>
 
     <form id="loginForm">
 
       <label>Email</label>
       <input type="email" id="email" name="email" required>
 
-      <label>Şifre</label>
+      <label>Password</label>
       <input type="password" id="password" name="password" required>
 
-      <button type="submit">Giriş Yap</button>
+      <button type="submit">Log In</button>
 
-      <!-- Backend hata dönerse gösterilir -->
+      <!-- Shown if backend returns an error -->
       <div class="error" id="errorMsg" style="display: none;"></div>
     </form>
 
     <div class="footer-text">
-      Hesabın yok mu? <a href="register.html">Kayıt Ol</a>
+      Don’t have an account? <a href="register.html">Register</a>
     </div>
     <div class="footer-text">
-       <a href="ana_sayfa.html">Ana Sayfaya dön</a>
+       <a href="ana_sayfa.html">Back to Home Page</a>
     </div>
      
   </div>
@@ -160,23 +160,23 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Hasta kontrolü
+          // Patient check
           if (data.role_name === 'patient') {
-            // Kullanıcı bilgilerini localStorage'a kaydet
+            // Save user info to localStorage
             localStorage.setItem('userInfo', JSON.stringify(data));
 
-            // Dashboard'a yönlendir
+            // Redirect to dashboard
             window.location.href = 'hasta_dashboard.html';
           } else {
-            errorMsg.textContent = 'Bu sayfa sadece hasta kullanıcılar içindir.';
+            errorMsg.textContent = 'This page is for patient users only.';
             errorMsg.style.display = 'block';
           }
         } else {
-          errorMsg.textContent = data.detail || 'Email veya şifre hatalı';
+          errorMsg.textContent = data.detail || 'Incorrect email or password';
           errorMsg.style.display = 'block';
         }
       } catch (error) {
-        errorMsg.textContent = 'Bağlantı hatası: ' + error.message;
+        errorMsg.textContent = 'Connection error: ' + error.message;
         errorMsg.style.display = 'block';
       }
     });

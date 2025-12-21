@@ -98,14 +98,14 @@
                 <select id="docSpec"
                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;">
                     <option value="">Select Specialty</option>
-                    <option value="kardiyoloji">Kardiyoloji</option>
-                    <option value="dahiliye">Dahiliye</option>
-                    <option value="ortopedi">Ortopedi</option>
-                    <option value="goz">Göz Hastalıkları</option>
-                    <option value="noroloji">Nöroloji</option>
-                    <option value="cildiye">Cildiye</option>
-                    <option value="kulak">Kulak Burun Boğaz</option>
-                    <option value="psikiyatri">Psikiyatri</option>
+                    <option value="kardiyoloji">Cardiology</option>
+                    <option value="dahiliye">Internal Medicine</option>
+                    <option value="ortopedi">Orthopedics</option>
+                    <option value="goz">Ophthalmology</option>
+                    <option value="noroloji">Neurology</option>
+                    <option value="cildiye">Dermatology</option>
+                    <option value="kulak">Ear, Nose and Throat</option>
+                    <option value="psikiyatri">Psychiatry</option>
                 </select>
 
                 <button class="btn primary" onclick="addDoctor()">Add Doctor</button>
@@ -182,7 +182,7 @@
                     tbody.appendChild(tr);
                 });
             } catch (error) {
-                console.error('Kullanıcılar yüklenemedi:', error);
+                console.error('Users could not be loaded:', error);
             }
         }
 
@@ -208,7 +208,7 @@
                     list.appendChild(item);
                 });
             } catch (error) {
-                console.error('Doktorlar yüklenemedi:', error);
+                console.error('Doctors could not be loaded:', error);
             }
         }
 

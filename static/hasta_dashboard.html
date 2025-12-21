@@ -3,39 +3,39 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Hasta Paneli</title>
+  <title>Patient Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
 </head>
 
 <body>
 
   <div class="dashboard">
-    <h2>HOŞ GELDİNİZ</h2>
-    <p class="welcome" id="welcomeText">Sayın Hastamız;</p>
+    <h2>WELCOME</h2>
+    <p class="welcome" id="welcomeText">Dear Patient;</p>
 
     <div class="description">
-      Buradan randevu alabilir, mevcut randevularınızı görüntüleyebilirsiniz.
+      From here, you can book appointments and view your existing appointments.
     </div>
 
     <div class="cards">
       <a href="randevu_al.html" class="card">
         <div class="icon">📅</div>
-        <div class="title">Randevu Al</div>
+        <div class="title">Book Appointment</div>
       </a>
 
       <a href="randevularim.html" class="card">
         <div class="icon">📋</div>
-        <div class="title">Randevularım</div>
+        <div class="title">My Appointments</div>
       </a>
 
       <a href="#" onclick="openPasswordModal(); return false;" class="card">
         <div class="icon">🔑</div>
-        <div class="title">Şifre Değiştir</div>
+        <div class="title">Change Password</div>
       </a>
 
       <a href="#" onclick="logout(); return false;" class="card">
         <div class="icon">🚪</div>
-        <div class="title">Çıkış Yap</div>
+        <div class="title">Log Out</div>
       </a>
     </div>
   </div>
@@ -47,15 +47,15 @@
       style="background-color:#fefefe; margin:15% auto; padding:20px; border:1px solid #888; width:300px; border-radius:10px; text-align: left;">
       <span class="close" onclick="closePasswordModal()"
         style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
-      <h2 style="margin-top:0; color: #333;">Şifre Değiştir</h2>
-      <input type="password" id="currentPass" placeholder="Mevcut Şifre"
+      <h2 style="margin-top:0; color: #333;">Change Password</h2>
+      <input type="password" id="currentPass" placeholder="Current Password"
         style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
-      <input type="password" id="newPass" placeholder="Yeni Şifre"
+      <input type="password" id="newPass" placeholder="New Password"
         style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
-      <input type="password" id="confirmPass" placeholder="Yeni Şifre Tekrar"
+      <input type="password" id="confirmPass" placeholder="Confirm New Password"
         style="width:100%; margin-bottom:10px; padding:10px; box-sizing: border-box;">
       <button onclick="changePassword()"
-        style="width:100%; padding:10px; background-color:#4f46e5; color:white; border:none; border-radius:5px; cursor:pointer;">Güncelle</button>
+        style="width:100%; padding:10px; background-color:#4f46e5; color:white; border:none; border-radius:5px; cursor:pointer;">Update</button>
       <p id="passMsg" style="margin-top:10px; font-size:14px; text-align: center;"></p>
     </div>
   </div>
@@ -66,7 +66,7 @@
 
     if (userInfo.first_name && userInfo.last_name) {
       document.getElementById('welcomeText').textContent =
-        `Sayın ${userInfo.first_name} ${userInfo.last_name};`;
+        `Dear ${userInfo.first_name} ${userInfo.last_name};`;
     }
 
     function logout() {
@@ -77,7 +77,7 @@
     // Modal functions
     function openPasswordModal() {
       if (!userInfo.user_id) {
-        alert("Lütfen önce giriş yapın.");
+        alert("Please log in first.");
         return;
       }
       document.getElementById('passwordModal').style.display = 'block';
@@ -99,13 +99,13 @@
 
       if (!currentPass || !newPass || !confirmPass) {
         msg.style.color = 'red';
-        msg.textContent = 'Lütfen tüm alanları doldurun.';
+        msg.textContent = 'Please fill in all fields.';
         return;
       }
 
       if (newPass !== confirmPass) {
         msg.style.color = 'red';
-        msg.textContent = 'Yeni şifreler eşleşmiyor.';
+        msg.textContent = 'New passwords do not match.';
         return;
       }
 
@@ -127,11 +127,11 @@
           setTimeout(closePasswordModal, 2000);
         } else {
           msg.style.color = 'red';
-          msg.textContent = data.detail || 'Şifre güncellenemedi';
+          msg.textContent = data.detail || 'Password could not be updated';
         }
       } catch (error) {
         msg.style.color = 'red';
-        msg.textContent = 'Bağlantı hatası';
+        msg.textContent = 'Connection error';
       }
     }
   </script>
