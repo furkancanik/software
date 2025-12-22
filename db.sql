@@ -790,6 +790,7 @@ CALL sp_get_available_slots(
     CURDATE()
 );
 
+-- Test 1 – Valid Appointment Creation
 CALL sp_create_appointment(
     (SELECT patient_id FROM Patients LIMIT 1),
     (SELECT doctor_id FROM Doctors WHERE expertise='Cardiology' LIMIT 1),
@@ -798,6 +799,7 @@ CALL sp_create_appointment(
     (SELECT user_id FROM Users WHERE role_id = (SELECT role_id FROM Roles WHERE role_name='secretary') LIMIT 1)
 );
 
+-- Test 2 – Appointment Outside Working Hours 
 -- Pediatrics doctor should not work at 09:00 → should throw an ERROR
 CALL sp_create_appointment(
     (SELECT patient_id FROM Patients LIMIT 1),
@@ -807,4 +809,27 @@ CALL sp_create_appointment(
     (SELECT user_id FROM Users WHERE role_id = (SELECT role_id FROM Roles WHERE role_name='admin') LIMIT 1)
 );
 
+-- Test 3 – Appointment Conflict (Double Booking)
+CALL sp_create_appointment(
+    (SELECT patient_id FROM Patients LIMIT 1),
+    (SELECT doctor_id FROM Doctors WHERE expertise='Cardiology' LIMIT 1),
+    (SELECT slot_id FROM Time_Slots WHERE start_time='09:00:00'),
+    CURDATE(),
+    (SELECT user_id FROM Users WHERE email='secretary@clinic.com')
+);
 
+-- TEST 4: Unauthorized Appointment Cancellation
+CALL sp_cancel_appointment(
+    (SELECT appointment_id FROM Appointments LIMIT 1),
+    (SELECT user_id FROM Users WHERE email='bob@mail.com')
+);
+
+-- TEST 5: Authorized Appointment Cancellation
+CALL sp_cancel_appointment(
+    (SELECT appointment_id FROM Appointments LIMIT 1),
+    (SELECT user_id FROM Users WHERE email='secretary@clinic.com')
+);
+
+-- Verification of Test Results
+SELECT * FROM Appointments;
+SELECT * FROM Appointment_Actions;
