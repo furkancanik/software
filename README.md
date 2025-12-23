@@ -19,7 +19,7 @@ Bu proje, bir kliniğin randevu süreçlerini yönetmek için geliştirilmiş we
 - **Randevu Yönetimi:** Hastalar aktif doktorlardan uygun saat dilimlerine randevu alabilir.
 - **Doktor Paneli:** Doktorlar kendi çalışma saatlerini güncelleyebilir ve randevularını görebilir..
 - **Admin Paneli:** Doktor ekleme/silme ve kullanıcı listeleme işlemleri yapılabilir.
-- **Çakışma Kontrolü:** Aynı saat dilimine birden fazla randevu verilmesi engellenir.
+- **Çakışma Kontrolüü:** Aynı saat dilimine birden fazla randevu verilmesi engellenir.
 - **SQLite Veritabanı:** Kurulumu kolay ve hafif bir veritabanı yapısı kullanılmıştır....
 
 ## 🛠️ Teknolojiler
